@@ -60,7 +60,7 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
         {
             // DX
         }
-
+        //dadawdadawdasw
         //DAb
 
         memcpy(bufferData.pData, &myObjectBufferData, sizeof(ObjectBufferData));
