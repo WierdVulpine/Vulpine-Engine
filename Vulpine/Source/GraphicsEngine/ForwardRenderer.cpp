@@ -61,6 +61,8 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
             // DX
         }
 
+        //DAb
+
         memcpy(bufferData.pData, &myObjectBufferData, sizeof(ObjectBufferData));
         DX11::Context->Unmap(myObjectBuffer.Get(), 0);
 
