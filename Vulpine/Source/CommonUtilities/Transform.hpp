@@ -22,10 +22,12 @@ namespace CommonUtilities
 		{
 			Matrix4x4f temp;
 
+			temp = Matrix4x4f::CreateScaleMatrix(myScale);
+
 			// X Y Z Rotation
 			temp *= Matrix4x4f::CreateRotationAroundX(myRotation.x);
-			temp *= Matrix4x4f::CreateRotationAroundX(myRotation.y);
-			temp *= Matrix4x4f::CreateRotationAroundX(myRotation.z);
+			temp *= Matrix4x4f::CreateRotationAroundY(myRotation.y);
+			temp *= Matrix4x4f::CreateRotationAroundZ(myRotation.z);
 
 			temp(4, 1) = myPosition.x;
 			temp(4, 2) = myPosition.y;

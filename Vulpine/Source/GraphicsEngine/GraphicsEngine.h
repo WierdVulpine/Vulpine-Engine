@@ -1,5 +1,8 @@
 #pragma once
 #include "DX11.h"
+#include "ForwardRenderer.h"
+#include "Model.h"
+#include "Camera.h"
 
 class ModelAssetHandler;
 
@@ -24,5 +27,10 @@ public:
 
 private:
 	DX11 myDX11FrameWork;
+	ForwardRenderer	myForwardRenderer;
+
+	std::shared_ptr<Model> myModel;
+	std::shared_ptr<Camera> myCamera;
+
 };
 

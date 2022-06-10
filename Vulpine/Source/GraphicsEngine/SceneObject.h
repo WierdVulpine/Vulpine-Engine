@@ -13,7 +13,7 @@ public:
 	void SetTransform(CommonUtilities::Transform someTransform) { myTransform = someTransform; }
 
 	void SetRotation(float aPitch, float aYaw, float aRoll) { myTransform.SetRotation({ aPitch, aYaw, aRoll }); }
-	void SetRotation(CommonUtilities::Vector3<float> aRotation) { myTransform.SetPosition(aRotation); }
+	void SetRotation(CommonUtilities::Vector3<float> aRotation) { myTransform.SetRotation(aRotation); }
 
 	void SetPosition(float aX, float aY, float aZ) { myTransform.SetPosition({ aX, aY, aZ }); }
 	void SetPosition(CommonUtilities::Vector3<float> aPosition) { myTransform.SetPosition(aPosition); }

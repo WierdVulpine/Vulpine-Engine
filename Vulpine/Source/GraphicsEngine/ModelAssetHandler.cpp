@@ -63,23 +63,23 @@ bool ModelAssetHandler::InitUnitCube()
 
 	std::vector<unsigned int> mdlIndecies =
 	{
-		0,2,1, // Right Side
-		1,2,4,
+		0,2,4, // Right Side
+		4,1,0,
 
 		3,0,1, // Top Side
 		1,5,3,
 
-		3,0,1, // Back Side
-		1,6,3,
+		3,6,2, // Back Side
+		2,0,3,
 
-		5,3,6, // Left Side
-		7,5,6,
+		3,5,7, // Left Side
+		7,6,3,
 
 		5,1,4, // Front Side
 		4,7,5,
 
-		6,2,4, // Bottom Side
-		4,7,6,
+		7,4,2, // Bottom Side
+		2,6,7,
 	};
 
 	D3D11_BUFFER_DESC indexBufferDesc{};

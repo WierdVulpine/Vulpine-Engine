@@ -4,10 +4,11 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <string>
+#include "SceneObject.h"
 
 using namespace Microsoft::WRL;
 
-class Model
+class Model : public SceneObject
 {
 public:
 	struct MeshData

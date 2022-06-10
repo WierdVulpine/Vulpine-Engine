@@ -8,7 +8,7 @@ class Camera : public SceneObject
 {
 	Matrix4x4f myProjection = {};
 
-	float myNearPlane = 0.1f;
+	float myNearPlane = 1.f;
 	float myFarPlane = 1500.0f;
 
 public:
