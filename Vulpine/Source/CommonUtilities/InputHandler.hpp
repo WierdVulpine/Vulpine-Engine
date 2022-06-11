@@ -2,6 +2,7 @@
 #include <windows.h>
 #include <windowsx.h>
 #include <bitset>
+#include "Vector2.hpp"
 
 #pragma region Defines
 #define Zero_KEY 0x30
@@ -72,7 +73,14 @@ namespace CommonUtilities
 		bool UpdateEvents(UINT aMessage, WPARAM wParam, LPARAM lParam);
 		void UpdateInput();
 		void SetMousePosition(int aX, int aY);
-		Point GetMousePosition() const;
+		CommonUtilities::Vector2f GetMousePosition() const;
+
+		CommonUtilities::Vector2f GetMouseDelta()
+		{
+			return (myMousePos - myPreviousMousePosition);
+		}
+
+		void SetHandle(HWND aHandlee) { myHandle = aHandlee; }
 
 		~InputHandler() = default;
 	private:
@@ -82,6 +90,15 @@ namespace CommonUtilities
 
 		std::bitset<6> myCurrentMouseInputs;
 		std::bitset<3> myMouseInputs;
-		Point myMousePos;
+		CommonUtilities::Vector2f myMousePos;
+
+		HWND myHandle;
+
+		CommonUtilities::Vector2f myTentativeMousePosition;
+		CommonUtilities::Vector2f myCurrentMousePosition;
+		CommonUtilities::Vector2f myPreviousMousePosition;
+
+		CommonUtilities::Vector2f myTentativeMouseDelta;
+		CommonUtilities::Vector2f myMouseDelta;
 	};
 }

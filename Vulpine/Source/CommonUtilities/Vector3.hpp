@@ -88,7 +88,9 @@ namespace CommonUtilities
 	template<class T>
 	inline Vector3<T> Vector3<T>::GetNormalized() const
 	{
-		return Vector3<T>(x, y, z).Normalize();
+		Vector3<T> temp(x, y, z);
+		temp.Normalize();
+		return temp;
 	}
 
 	

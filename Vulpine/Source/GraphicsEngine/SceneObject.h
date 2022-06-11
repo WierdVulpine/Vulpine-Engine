@@ -22,6 +22,7 @@ public:
 	void SetScale(CommonUtilities::Vector3<float> aScale) { myTransform.SetScale(aScale); }
 
 	CommonUtilities::Transform const& GetTransform() const { return myTransform; }
+	CommonUtilities::Transform& GetTransform() { return myTransform; }
 
 };
 

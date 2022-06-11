@@ -2,6 +2,9 @@
 #define WIN32_LEAN_AND_MEAN
 #include "Windows.h"
 #include "GraphicsEngine.h"
+#include "Input.h"
+#include "Time.h"
+#include "Scene.h"
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
@@ -17,6 +20,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     GraphicsEngine graphicsEngine;
 
+
     const SIZE windowSize = { 1200, 800 };
 
     bool shouldRun = graphicsEngine.Initialize(
@@ -27,12 +31,19 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         false
     );
 
+    Scene myScene;
+    myScene.Init();
+
+    Input::SetHandle(graphicsEngine.GetWindowHandle());
+
     while (shouldRun)
     {
         while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+
+            Input::UpdateEvents(msg.message, msg.wParam, msg.lParam);
 
             // Should update input here.
 
@@ -41,6 +52,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                 return 0;
             }
         }
+
+        Time::Update();
+
+        myScene.Update();
+        myScene.Render();
 
         // REMEMBER!
         // The frame update for the game does NOT happen inside the PeekMessage loop.
@@ -53,6 +69,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         graphicsEngine.EndFrame();
 
+        Input::UpdateInput();
     }
 
     return 0;

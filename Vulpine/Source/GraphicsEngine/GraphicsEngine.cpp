@@ -5,6 +5,7 @@
 #include <fstream>
 #include "Model.h"
 #include "ModelAssetHandler.h"
+#include "Renderer.h"
 
 LRESULT GraphicsEngine::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -20,6 +21,7 @@ LRESULT GraphicsEngine::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 		const CREATESTRUCT* createdStruct = reinterpret_cast<CREATESTRUCT*>(lParam);
 		graphicsEnginePtr = static_cast<GraphicsEngine*>(createdStruct->lpCreateParams);
 	}
+
 
 	return DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
@@ -52,12 +54,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY, unsigned someWid
 
 	myForwardRenderer.Initialize();
 
-	myCamera = std::make_shared<Camera>(Camera());
-	myCamera->Init(90, { 1200, 800 }, 0.1f, 15000.f);
-	myCamera->SetPosition({ 0,0,-200 });
-
-	myModel = ModelAssetHandler::GetModel(L"Cube");
-	myModel->SetPosition({ 0,0,0 });
+	
 
     return true;
 }
@@ -74,6 +71,6 @@ void GraphicsEngine::EndFrame()
 
 void GraphicsEngine::RenderFrame()
 {
-	myModel->SetScale({myModel->GetTransform().GetScale().x,myModel->GetTransform().GetScale().y, myModel->GetTransform().GetScale().z });
-	myForwardRenderer.Render(myCamera, { myModel });
+	Renderer::Render(myForwardRenderer);
+	//myForwardRenderer.Render(myCamera, { myModel });
 }

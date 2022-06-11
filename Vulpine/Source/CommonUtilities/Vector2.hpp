@@ -34,7 +34,7 @@ namespace CommonUtilities
 		T Dot(const Vector2<T>& aVector) const;
 	};
 
-	
+	typedef Vector2<float> Vector2f;
 
 	template<class T>
 	Vector2<T>::Vector2()

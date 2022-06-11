@@ -31,6 +31,10 @@ bool ForwardRenderer::Initialize()
 
 void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList)
 {
+    if (!aCamera)
+    {
+        return;
+    }
     HRESULT result = S_FALSE;
     D3D11_MAPPED_SUBRESOURCE bufferData;
 

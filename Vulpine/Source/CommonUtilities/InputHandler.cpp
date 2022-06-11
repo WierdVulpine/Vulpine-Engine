@@ -50,7 +50,7 @@ namespace CommonUtilities
 		return false;
 	}
 
-	Point InputHandler::GetMousePosition() const
+	CommonUtilities::Vector2f InputHandler::GetMousePosition() const
 	{
 		return	myMousePos;
 	}
@@ -68,6 +68,7 @@ namespace CommonUtilities
 			myCurrentMouseInputs.set(keyIndex+ 3, myCurrentMouseInputs.test(keyIndex));
 			myCurrentMouseInputs.set(keyIndex, myMouseInputs.test(keyIndex));
 		}
+		myPreviousMousePosition = myMousePos;
 	}
 
 	void InputHandler::SetMousePosition(int aX, int aY)
@@ -90,6 +91,7 @@ namespace CommonUtilities
 
 			myMousePos.x = GET_X_LPARAM(lParam);
 			myMousePos.y = GET_Y_LPARAM(lParam);
+			
 			break;
 		case WM_LBUTTONDOWN:
 			myMouseInputs.set(0, true);
@@ -105,9 +107,6 @@ namespace CommonUtilities
 			break;
 		case WM_RBUTTONDOWN:
 			myMouseInputs.set(2, true);
-			break;
-		case WM_RBUTTONUP:
-			myMouseInputs.set(2, false);
 			break;
 		default: break;
 		}

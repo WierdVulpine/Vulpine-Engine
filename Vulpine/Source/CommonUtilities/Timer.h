@@ -1,6 +1,4 @@
 #pragma once
-
-#pragma once
 #include <chrono>
 
 namespace CommonUtilities
@@ -10,7 +8,7 @@ namespace CommonUtilities
 	public:
 		Timer();
 		Timer(const Timer& aTimer) = delete;
-		Timer& operator=(const Timer& aTimer) = delete;
+		//Timer& operator=(const Timer& aTimer) = delete;
 
 		void Update();
 
