@@ -100,7 +100,7 @@ bool ModelAssetHandler::InitUnitCube()
 	// Shader Stuff
 
 	std::ifstream vsFile;
-	vsFile.open("Shaders/DefaultVS.cso", std::ios::binary);
+	vsFile.open("Shaders/FirstShader_vs.cso", std::ios::binary);
 	std::string vsData = { std::istreambuf_iterator<char>(vsFile), std::istreambuf_iterator<char>() };
 	ID3D11VertexShader* vertexShader;
 	result = DX11::Device->CreateVertexShader(vsData.data(), vsData.size(), nullptr, &vertexShader);
@@ -111,7 +111,7 @@ bool ModelAssetHandler::InitUnitCube()
 	vsFile.close();
 
 	std::ifstream psFile;
-	psFile.open("Shaders/DefaultPS.cso", std::ios::binary);
+	psFile.open("Shaders/FirstShader_ps.cso", std::ios::binary);
 	std::string psData = { std::istreambuf_iterator<char>(psFile), std::istreambuf_iterator<char>() };
 	ID3D11PixelShader* pixelShader;
 	result = DX11::Device->CreatePixelShader(psData.data(), psData.size(), nullptr, &pixelShader);
