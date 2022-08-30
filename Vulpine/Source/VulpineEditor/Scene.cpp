@@ -27,17 +27,14 @@ void Scene::Update()
 {
 	ImGui::Begin("Gamer");
 
-	static bool isGey = false;
+	float cubePos[] = { mySceneObjects[0]->GetTransform().GetPosition().x, mySceneObjects[0]->GetTransform().GetPosition().y, mySceneObjects[0]->GetTransform().GetPosition().z };
+	float cubeRotation[] = { mySceneObjects[0]->GetTransform().GetRotation().x, mySceneObjects[0]->GetTransform().GetRotation().y, mySceneObjects[0]->GetTransform().GetRotation().z };
 
-	if (ImGui::Button("Hello"))
-	{
-		isGey = !isGey;
-	}
+	ImGui::DragFloat3("Position", cubePos);
+	ImGui::DragFloat3("Rotation", cubeRotation);
 
-	if (isGey)
-	{
-		ImGui::Text("Lulw");
-	}
+	mySceneObjects[0]->SetPosition({ cubePos[0], cubePos[1], cubePos[2] });
+	mySceneObjects[0]->SetRotation({ cubeRotation[0], cubeRotation[1], cubeRotation[2] });
 
 	ImGui::End();
 

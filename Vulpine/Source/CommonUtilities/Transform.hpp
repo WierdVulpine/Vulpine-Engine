@@ -29,9 +29,9 @@ namespace CommonUtilities
 			temp = Matrix4x4f::CreateScaleMatrix(myScale);
 
 			// X Y Z Rotation
-			temp *= Matrix4x4f::CreateRotationAroundX(myRotation.x);
-			temp *= Matrix4x4f::CreateRotationAroundY(myRotation.y);
-			temp *= Matrix4x4f::CreateRotationAroundZ(myRotation.z);
+			temp *= Matrix4x4f::CreateRotationAroundX(myRotation.x * 3.14f / 180);
+			temp *= Matrix4x4f::CreateRotationAroundY(myRotation.y * 3.14f / 180);
+			temp *= Matrix4x4f::CreateRotationAroundZ(myRotation.z * 3.14f / 180);
 
 			temp(4, 1) = myPosition.x;
 			temp(4, 2) = myPosition.y;
