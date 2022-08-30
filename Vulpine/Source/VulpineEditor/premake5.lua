@@ -31,7 +31,8 @@ project "VulpineEditor"
 	includedirs
 	{
 		"../CommonUtilities/",
-		"../GraphicsEngine/"
+		"../GraphicsEngine/",
+		"../Imgui/"
 	}
 
 	filter "configurations:Debug"

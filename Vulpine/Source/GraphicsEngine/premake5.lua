@@ -15,7 +15,8 @@ project "GraphicsEngine"
 
 	includedirs
 	{
-		"../CommonUtilities/"
+		"../CommonUtilities/",
+		"../Imgui/"
 	}
 
 	links

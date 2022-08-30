@@ -5,6 +5,13 @@
 #include "Input.h"
 #include "Time.h"
 #include "Scene.h"
+#include "imgui.h"
+#include "imgui_impl_dx11.h"
+#include "imgui_impl_win32.h"
+
+#ifdef _DEBUG
+extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+#endif // _DEBUG
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     _In_opt_ HINSTANCE hPrevInstance,
@@ -36,10 +43,26 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     Input::SetHandle(graphicsEngine.GetWindowHandle());
 
+#ifdef _DEBUG
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    ImGui_ImplWin32_Init(graphicsEngine.GetWindowHandle());
+    ImGui_ImplDX11_Init(DX11::Device.Get(), DX11::Context.Get());
+    ImGui::StyleColorsDark();
+#endif
+
+
+
     while (shouldRun)
     {
         while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))
         {
+
+#ifdef _DEBUG
+            ImGui_ImplWin32_WndProcHandler(graphicsEngine.GetWindowHandle(), msg.message, msg.wParam, msg.lParam);
+#endif // _DEBUG
+
             TranslateMessage(&msg);
             DispatchMessage(&msg);
 
@@ -55,8 +78,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         Time::Update();
 
-        myScene.Update();
-        myScene.Render();
+        
 
         // REMEMBER!
         // The frame update for the game does NOT happen inside the PeekMessage loop.
@@ -65,7 +87,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         graphicsEngine.BeginFrame();
 
+#ifdef _DEBUG
+        ImGui_ImplDX11_NewFrame();
+        ImGui_ImplWin32_NewFrame();
+        ImGui::NewFrame();
+
+#endif // _DEBUG
+
         graphicsEngine.RenderFrame();
+
+        myScene.Update();
+        myScene.Render();
+
+#ifdef _DEBUG
+        ImGui::Render();
+        ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+#endif // _DEBUG
+
 
         graphicsEngine.EndFrame();
 

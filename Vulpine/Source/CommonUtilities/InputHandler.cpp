@@ -108,6 +108,9 @@ namespace CommonUtilities
 		case WM_RBUTTONDOWN:
 			myMouseInputs.set(2, true);
 			break;
+		case WM_RBUTTONUP:
+			myMouseInputs.set(2, false);
+			break;
 		default: break;
 		}
 		return false;

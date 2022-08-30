@@ -5,6 +5,7 @@
 #include <ModelAssetHandler.h>
 #include "Input.h"
 #include "Time.h"
+#include "imgui.h"
 
 void Scene::Init()
 {
@@ -16,6 +17,7 @@ void Scene::Init()
 
 	std::shared_ptr<Model> temp = ModelAssetHandler::GetModel(L"Cube");
 	temp->SetPosition({ 0,0,0 });
+
 	AddGameObject(temp);
 
 	Renderer::SetCamera(myMainCamera);
@@ -23,6 +25,23 @@ void Scene::Init()
 
 void Scene::Update()
 {
+	ImGui::Begin("Gamer");
+
+	static bool isGey = false;
+
+	if (ImGui::Button("Hello"))
+	{
+		isGey = !isGey;
+	}
+
+	if (isGey)
+	{
+		ImGui::Text("Lulw");
+	}
+
+	ImGui::End();
+
+
 	float speed = 20;
 	float rotSpeeed = 0.2f;
 
@@ -58,13 +77,17 @@ void Scene::Update()
 	rotDir.y = Input::GetMouseDelta().x;
 	rotDir.x = Input::GetMouseDelta().y;
 
-	myMainCamera->GetTransform().AddRotation(rotDir * rotSpeeed * Time::GetDeltaTime());
+	if (Input::MouseButtonPressed(2))
+	{
+		myMainCamera->GetTransform().AddRotation(rotDir * rotSpeeed * Time::GetDeltaTime());
+	}
 
 	myMainCamera->GetTransform().AddPosition(dir * speed * Time::GetDeltaTime());
 }
 
 void Scene::Render()
 {
+	
 	for (size_t i = 0; i < mySceneObjects.size(); i++)
 	{
 		Renderer::AddModel(mySceneObjects[i]);
