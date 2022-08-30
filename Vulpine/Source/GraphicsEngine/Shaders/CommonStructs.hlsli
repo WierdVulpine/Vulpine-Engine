@@ -31,3 +31,9 @@ cbuffer ObjectBuffer : register(b1)
 {
 	float4x4 OB_ToWorld;
 }
+
+cbuffer MaterialBuffer : register(b2)
+{
+	float3 MB_Albedo;
+	float padding;
+}

@@ -5,10 +5,12 @@
 #include <d3dcompiler.h>
 #include <string>
 #include "SceneObject.h"
+#include <vector>
+#include "Material.h"
 
 using namespace Microsoft::WRL;
 
-class Model : public SceneObject
+class Model : public SceneObject 
 {
 public:
 	struct MeshData
@@ -23,22 +25,25 @@ public:
 		ComPtr<ID3D11PixelShader> myPixelShader;
 		ComPtr<ID3D11InputLayout> myInputLayout;
 		UINT myPrimitiveTopology;
+		std::shared_ptr<Material> myMaterial;
 	};
 private:
 
-	MeshData myMeshData = {};
-	std::wstring myName;
+	std::vector<MeshData> myMeshData = {};
+	std::wstring myPath;
 
 public:
 
-	void Init(MeshData& someMeshData, const std::wstring& aPath)
+	void Init(std::vector<MeshData>& someMeshData, const std::wstring& aPath)
 	{
 		myMeshData = someMeshData;
-		myName = aPath;
+		myPath = aPath;
 	}
 
-	const MeshData& GetMeshData() const { return myMeshData; }
-	std::wstring const& GetName() const { return myName; }
+	const MeshData& GetMeshData(unsigned int anIndex) const { return myMeshData[anIndex]; }
+	std::wstring const& GetName() const { return myPath; }
+
+	FORCEINLINE size_t GetNumMeshes() const { return myMeshData.size(); }
 
 };
 

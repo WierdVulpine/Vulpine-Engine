@@ -7,7 +7,7 @@ void Renderer::SetCamera(std::shared_ptr<Camera> aCamera)
 	myCameraPtr = aCamera;
 }
 
-void Renderer::AddModel(const std::shared_ptr<Model>& aModel)
+void Renderer::AddModel(const std::shared_ptr<ModelInstance>& aModel)
 {
 	myStorage.myModels.push_back(aModel);
 }

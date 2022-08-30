@@ -1,7 +1,7 @@
 #include "ForwardRenderer.h"
 #include "DX11.h"
 #include "Camera.h"
-#include "Model.h"
+#include "ModelInstance.h"
 
 bool ForwardRenderer::Initialize()
 {
@@ -26,10 +26,17 @@ bool ForwardRenderer::Initialize()
         return false;
     }
 
+    bufferDescription.ByteWidth = sizeof(MaterialBufferData);
+    result = DX11::Device->CreateBuffer(&bufferDescription, nullptr, myMaterialBuffer.GetAddressOf());
+    if (FAILED(result))
+    {
+        return false;
+    }
+
     return true;
 }
 
-void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList)
+void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList)
 {
     if (!aCamera)
     {
@@ -52,38 +59,52 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
     DX11::Context->Unmap(myFrameBuffer.Get(), 0);
     DX11::Context->VSSetConstantBuffers(0, 1, myFrameBuffer.GetAddressOf());
 
-    for (const std::shared_ptr<Model> model : aModelList)
+    for (const std::shared_ptr<ModelInstance> model : aModelList)
     {
-        auto meshData = model->GetMeshData();
-
-        myObjectBufferData.World = model->GetTransform().GetMatrix();
-        ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
-
-        result = DX11::Context->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &bufferData);
-        if (FAILED(result))
+        for (size_t i = 0; i < model->GetNumMeshes(); i++)
         {
-            // DX
+            auto meshData = model->GetMeshData(i);
+
+            myObjectBufferData.World = model->GetTransform().GetMatrix();
+            ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+            result = DX11::Context->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &bufferData);
+            if (FAILED(result))
+            {
+                // DX
+            }
+
+            memcpy(bufferData.pData, &myObjectBufferData, sizeof(ObjectBufferData));
+            DX11::Context->Unmap(myObjectBuffer.Get(), 0);
+
+            myMaterialBufferData.Albedo = meshData.myMaterial->GetAlbedo();
+            ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
+
+            result = DX11::Context->Map(myMaterialBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &bufferData);
+            if (FAILED(result))
+            {
+                // UwU!!!
+            }
+
+            memcpy(bufferData.pData, &myMaterialBufferData, sizeof(MaterialBufferData));
+            DX11::Context->Unmap(myMaterialBuffer.Get(), 0);
+
+
+            DX11::Context->IASetVertexBuffers(0, 1, meshData.myVertexBuffer.GetAddressOf(), &meshData.myStride, &meshData.myOffset);
+            DX11::Context->IASetIndexBuffer(meshData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
+
+            DX11::Context->IASetPrimitiveTopology(static_cast<D3D_PRIMITIVE_TOPOLOGY>(meshData.myPrimitiveTopology));
+            DX11::Context->IASetInputLayout(meshData.myInputLayout.Get());
+
+            DX11::Context->VSSetShader(meshData.myVertexShader.Get(), nullptr, 0);
+            DX11::Context->PSSetShader(meshData.myPixelShader.Get(), nullptr, 0);
+
+            DX11::Context->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
+            DX11::Context->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
+            DX11::Context->PSSetConstantBuffers(2, 1, myMaterialBuffer.GetAddressOf());
+
+            DX11::Context->DrawIndexed(meshData.myNumberOfIndices, 0, 0);
         }
-        //dadawdadawdasw
-        //DAb
-
-        memcpy(bufferData.pData, &myObjectBufferData, sizeof(ObjectBufferData));
-        DX11::Context->Unmap(myObjectBuffer.Get(), 0);
-
-        DX11::Context->IASetVertexBuffers(0, 1, meshData.myVertexBuffer.GetAddressOf(), &meshData.myStride, &meshData.myOffset);
-        DX11::Context->IASetIndexBuffer(meshData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);
-
-        DX11::Context->IASetPrimitiveTopology(static_cast<D3D_PRIMITIVE_TOPOLOGY>(meshData.myPrimitiveTopology));
-        DX11::Context->IASetInputLayout(meshData.myInputLayout.Get());
-
-        DX11::Context->VSSetShader(meshData.myVertexShader.Get(), nullptr, 0);
-        DX11::Context->PSSetShader(meshData.myPixelShader.Get(), nullptr, 0);
-
-        DX11::Context->VSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
-        DX11::Context->PSSetConstantBuffers(1, 1, myObjectBuffer.GetAddressOf());
-
-        DX11::Context->DrawIndexed(meshData.myNumberOfIndices, 0, 0);
-
     }
 
 }

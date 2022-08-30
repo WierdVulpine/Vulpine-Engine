@@ -6,6 +6,7 @@
 #include "Input.h"
 #include "Time.h"
 #include "imgui.h"
+#include "ModelInstance.h"
 
 void Scene::Init()
 {
@@ -15,32 +16,48 @@ void Scene::Init()
 	myMainCamera->Init(90, { 1200, 800 }, 0.1f, 15000.f);
 	myMainCamera->SetPosition({ 0,0,-200 });
 
-	std::shared_ptr<Model> temp = ModelAssetHandler::GetModel(L"Cube");
+	std::shared_ptr<ModelInstance> temp = ModelAssetHandler::GetModelInstance(L"SM_Particle_Chest.fbx");
 	temp->SetPosition({ 0,0,0 });
+	std::shared_ptr<ModelInstance> temp1 = ModelAssetHandler::GetModelInstance(L"SM_Particle_Chest.fbx");
+	temp->SetPosition({ -50,0,0 });
 
 	AddGameObject(temp);
+	AddGameObject(temp1);
 
 	Renderer::SetCamera(myMainCamera);
 }
 
 void Scene::Update()
 {
-	ImGui::Begin("Gamer");
+	ImGui::SetNextWindowSize({ 350, 200 });
+	ImGui::Begin("Editor");
 
-	float cubePos[] = { mySceneObjects[0]->GetTransform().GetPosition().x, mySceneObjects[0]->GetTransform().GetPosition().y, mySceneObjects[0]->GetTransform().GetPosition().z };
-	float cubeRotation[] = { mySceneObjects[0]->GetTransform().GetRotation().x, mySceneObjects[0]->GetTransform().GetRotation().y, mySceneObjects[0]->GetTransform().GetRotation().z };
+	static int currentObject = 0;
+	if (mySceneObjects.size() > 1)
+	{
+		ImGui::SliderInt("Current Object ", &currentObject, 0, mySceneObjects.size() - 1);
+	}
+
+	float cubePos[] = { mySceneObjects[currentObject]->GetTransform().GetPosition().x, mySceneObjects[currentObject]->GetTransform().GetPosition().y, mySceneObjects[currentObject]->GetTransform().GetPosition().z };
+	float cubeRotation[] = { mySceneObjects[currentObject]->GetTransform().GetRotation().x, mySceneObjects[currentObject]->GetTransform().GetRotation().y, mySceneObjects[currentObject]->GetTransform().GetRotation().z };
+	float cubeScale[] = { mySceneObjects[currentObject]->GetTransform().GetScale().x, mySceneObjects[currentObject]->GetTransform().GetScale().y, mySceneObjects[currentObject]->GetTransform().GetScale().z };
 
 	ImGui::DragFloat3("Position", cubePos);
 	ImGui::DragFloat3("Rotation", cubeRotation);
+	ImGui::DragFloat3("Scale", cubeScale, 0.01f);
 
-	mySceneObjects[0]->SetPosition({ cubePos[0], cubePos[1], cubePos[2] });
-	mySceneObjects[0]->SetRotation({ cubeRotation[0], cubeRotation[1], cubeRotation[2] });
+	mySceneObjects[currentObject]->SetPosition({ cubePos[0], cubePos[1], cubePos[2] });
+	mySceneObjects[currentObject]->SetRotation({ cubeRotation[0], cubeRotation[1], cubeRotation[2] });
+	mySceneObjects[currentObject]->SetScale({ cubeScale[0], cubeScale[1], cubeScale[2] });
+
+	static float speed = 80;
+	static float rotSpeeed = 5.2f;
+
+	ImGui::Text("Camera:");
+	ImGui::DragFloat("Move Speed", &speed, 0.5f);
+	ImGui::DragFloat("Rotate Speed", &rotSpeeed, 0.5f);
 
 	ImGui::End();
-
-
-	float speed = 20;
-	float rotSpeeed = 0.2f;
 
 	CommonUtilities::Vector3f dir;
 
@@ -48,7 +65,7 @@ void Scene::Update()
 	{
 		dir.y = 1;
 	}
-	if (Input::KeyIsPressed(VK_SHIFT))
+	if (Input::KeyIsPressed(VK_CONTROL))
 	{
 		dir.y = -1;
 	}

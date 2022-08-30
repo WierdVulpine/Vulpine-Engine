@@ -18,12 +18,19 @@ project "GraphicsEngine"
 	includedirs
 	{
 		"../CommonUtilities/",
-		"../Imgui/"
+		"../Imgui/",
+		"../TGAImporter/"
 	}
 
 	links
 	{
-		"CommonUtilities"
+		"CommonUtilities",
+		"TGAFBXImporter.lib"
+	}
+
+	libdirs
+	{
+		"../../Lib/"
 	}
 
 	local shader_dir = "../../Bin/Shaders/"

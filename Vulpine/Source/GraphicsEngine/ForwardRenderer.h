@@ -8,7 +8,7 @@
 #include <vector>
 
 class Camera;
-class Model;
+class ModelInstance;
 
 using namespace CommonUtilities;
 
@@ -25,14 +25,21 @@ class ForwardRenderer
 		Matrix4x4f World;
 	} myObjectBufferData;
 
+	struct MaterialBufferData
+	{
+		Vector3f Albedo;
+		float padding;
+	} myMaterialBufferData;
+
 	Microsoft::WRL::ComPtr<ID3D11Buffer> myFrameBuffer;
 	Microsoft::WRL::ComPtr<ID3D11Buffer> myObjectBuffer;
+	Microsoft::WRL::ComPtr<ID3D11Buffer> myMaterialBuffer;
 
 public:
 
 	bool Initialize();
 
-	void Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<Model>>& aModelList);
+	void Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList);
 
 };
 

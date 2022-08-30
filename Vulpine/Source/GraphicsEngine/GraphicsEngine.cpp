@@ -6,6 +6,7 @@
 #include "Model.h"
 #include "ModelAssetHandler.h"
 #include "Renderer.h"
+#include "FBXImporter.h"
 
 LRESULT GraphicsEngine::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -54,7 +55,10 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY, unsigned someWid
 
 	myForwardRenderer.Initialize();
 
-	
+	if (TGA::FBXImporter::LoadModel("SM_Particle_Chest.fbx", TGA::FBXModel()))
+	{
+		int t = 1;
+	}
 
     return true;
 }

@@ -2,7 +2,7 @@
 #include <memory>
 #include <vector>
 #include "SceneObject.h"
-#include <Model.h>
+#include "ModelInstance.h"
 
 class Camera;
 class GraphicsEngine;
@@ -28,7 +28,7 @@ public:
 	void Render();
 
 private:
-	std::vector<std::shared_ptr<Model>> mySceneObjects;
+	std::vector<std::shared_ptr<ModelInstance>> mySceneObjects;
 
 	std::shared_ptr<Camera> myMainCamera;
 };
