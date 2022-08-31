@@ -1,10 +1,12 @@
 struct VertexInput
 {
-	float4 myPosition : POSITION;
-	float4 myVxColor  : COLOR0;
-	float4 myVxColor2 : COLOR1;
-	float4 myVxColor3 : COLOR2;
-	float4 myVxColor4 : COLOR3;
+	float4 myPosition    : POSITION;
+	float4 myVxColor     : COLOR0;
+	float4 myVxColor2    : COLOR1;
+	float4 myVxColor3    : COLOR2;
+	float4 myVxColor4    : COLOR3;
+	uint4 myBoneIDs      : BONEIDS;
+	float4 myBoneWeights : BONEWEIGHTS;
 };
 
 struct VertexToPixel
@@ -30,6 +32,9 @@ cbuffer FrameBuffer : register(b0)
 cbuffer ObjectBuffer : register(b1)
 {
 	float4x4 OB_ToWorld;
+	bool OB_HasBones;
+	float3 OB_Padding;
+	float4x4 OB_BoneData[128];
 }
 
 cbuffer MaterialBuffer : register(b2)

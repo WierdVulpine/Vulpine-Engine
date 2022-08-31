@@ -13,6 +13,11 @@ project "CommonUtilities"
 		"**.hpp"
 	}
 
+	includedirs
+	{
+		"../FBXImporter/"
+	}
+
 	filter "configurations:Debug"
 		defines {"_DEBUG"}
 		runtime "Debug"

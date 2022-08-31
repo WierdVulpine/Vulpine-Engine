@@ -23,6 +23,7 @@ public:
 
 	static std::shared_ptr<Model> GetModel(const std::wstring& someFilePath);
 	static std::shared_ptr<ModelInstance> GetModelInstance(const std::wstring& aModelName);
+	static bool LoadAnimation(const std::wstring& aModelName, const std::wstring& someFilePath);
 
 };
 

@@ -16,19 +16,30 @@ void Scene::Init()
 	myMainCamera->Init(90, { 1200, 800 }, 0.1f, 15000.f);
 	myMainCamera->SetPosition({ 0,0,-200 });
 
-	std::shared_ptr<ModelInstance> temp = ModelAssetHandler::GetModelInstance(L"SM_Particle_Chest.fbx");
+	std::shared_ptr<ModelInstance> temp = ModelAssetHandler::GetModelInstance(L"gremlin_sk.fbx");
+	ModelAssetHandler::LoadAnimation(L"gremlin_sk.fbx", L"gremlin@run.fbx");
+	temp->SetAnimation(L"gremlin@run.fbx");
 	temp->SetPosition({ 0,0,0 });
+
 	std::shared_ptr<ModelInstance> temp1 = ModelAssetHandler::GetModelInstance(L"SM_Particle_Chest.fbx");
-	temp->SetPosition({ -50,0,0 });
+	temp1->SetPosition({ -100,0,0 });
+	std::shared_ptr<ModelInstance> temp2 = ModelAssetHandler::GetModelInstance(L"Cube");
+	temp2->SetPosition({ 100,0,0 });
 
 	AddGameObject(temp);
 	AddGameObject(temp1);
+	AddGameObject(temp2);
 
 	Renderer::SetCamera(myMainCamera);
 }
 
 void Scene::Update()
 {
+	for (size_t i = 0; i < mySceneObjects.size(); i++)
+	{
+		mySceneObjects[i]->Update(Time::GetDeltaTime());
+	}
+
 	ImGui::SetNextWindowSize({ 350, 200 });
 	ImGui::Begin("Editor");
 

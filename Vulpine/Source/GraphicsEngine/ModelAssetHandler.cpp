@@ -13,7 +13,32 @@ float GetRand()
 	return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
 }
 
-//std::unordered_map<std::wstring, std::shared_ptr<Model>> ModelAssetHandler::myModelRegistry;
+CommonUtilities::Matrix4x4f ConvertMatrix(TGA::Matrix& aTGAMAtrix)
+{
+	CommonUtilities::Matrix4x4f result;
+
+	result(1, 1) = aTGAMAtrix.Data[0];
+	result(1, 2) = aTGAMAtrix.Data[1];
+	result(1, 3) = aTGAMAtrix.Data[2];
+	result(1, 4) = aTGAMAtrix.Data[3];
+
+	result(2, 1) = aTGAMAtrix.Data[4];
+	result(2, 2) = aTGAMAtrix.Data[5];
+	result(2, 3) = aTGAMAtrix.Data[6];
+	result(2, 4) = aTGAMAtrix.Data[7];
+
+	result(3, 1) = aTGAMAtrix.Data[8];
+	result(3, 2) = aTGAMAtrix.Data[9];
+	result(3, 3) = aTGAMAtrix.Data[10];
+	result(3, 4) = aTGAMAtrix.Data[11];
+
+	result(4, 1) = aTGAMAtrix.Data[12];
+	result(4, 2) = aTGAMAtrix.Data[13];
+	result(4, 3) = aTGAMAtrix.Data[14];
+	result(4, 4) = aTGAMAtrix.Data[15];
+
+	return result;
+}
 
 bool ModelAssetHandler::InitUnitCube()
 {
@@ -52,6 +77,21 @@ bool ModelAssetHandler::InitUnitCube()
 			0 , 0, 0, 1
 		}
 	};
+
+	std::wstring wideMatName = L"Default_M.dds";
+
+	std::shared_ptr<Material> meshMaterial;
+	if (myMaterialRegistry.find(wideMatName) != myMaterialRegistry.end())
+	{
+		meshMaterial = myMaterialRegistry[wideMatName];
+	}
+	else
+	{
+		meshMaterial = std::make_shared<Material>();
+		meshMaterial->Init(wideMatName, { GetRand(), GetRand(), GetRand() });
+
+		myMaterialRegistry.insert({ wideMatName, meshMaterial });
+	}
 
 	HRESULT result;
 
@@ -140,6 +180,9 @@ bool ModelAssetHandler::InitUnitCube()
 		{"COLOR", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"COLOR", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+		{"BONEIDS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	ID3D11InputLayout* inputLayout;
@@ -150,6 +193,7 @@ bool ModelAssetHandler::InitUnitCube()
 	}
 
 	Model::MeshData modelData = {};
+	modelData.myMaterial = meshMaterial;
 	modelData.myNumberOfVertecies = static_cast<UINT>(mdlVerticies.size());
 	modelData.myNumberOfIndices = static_cast<UINT>(mdlIndecies.size());
 	modelData.myStride = sizeof(Vertex);
@@ -179,6 +223,43 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 	{
 		std::vector<Model::MeshData> mdlMeshData;
 		mdlMeshData.resize(tgaModel.Meshes.size());
+
+		Model::Skeleton mdlSkeleton;
+		const bool hasSkeleton = tgaModel.Skeleton.GetRoot();
+
+		if (hasSkeleton)
+		{
+			mdlSkeleton.Bones.resize(tgaModel.Skeleton.Bones.size());
+			mdlSkeleton.BoneName.resize(tgaModel.Skeleton.Bones.size());
+
+			for (size_t i = 0; i < tgaModel.Skeleton.Bones.size(); i++)
+			{
+				mdlSkeleton.Bones[i].Parent = tgaModel.Skeleton.Bones[i].Parent;
+				mdlSkeleton.Bones[i].Name = tgaModel.Skeleton.Bones[i].Name;
+				mdlSkeleton.Bones[i].Children = tgaModel.Skeleton.Bones[i].Children;
+				mdlSkeleton.BoneName[i] = tgaModel.Skeleton.Bones[i].Name;
+
+				mdlSkeleton.Bones[i].BindPoseInverse(1, 1) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[0];
+				mdlSkeleton.Bones[i].BindPoseInverse(1, 2) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[1];
+				mdlSkeleton.Bones[i].BindPoseInverse(1, 3) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[2];
+				mdlSkeleton.Bones[i].BindPoseInverse(1, 4) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[3];
+
+				mdlSkeleton.Bones[i].BindPoseInverse(2, 1) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[4];
+				mdlSkeleton.Bones[i].BindPoseInverse(2, 2) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[5];
+				mdlSkeleton.Bones[i].BindPoseInverse(2, 3) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[6];
+				mdlSkeleton.Bones[i].BindPoseInverse(2, 4) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[7];
+
+				mdlSkeleton.Bones[i].BindPoseInverse(3, 1) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[8];
+				mdlSkeleton.Bones[i].BindPoseInverse(3, 2) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[9];
+				mdlSkeleton.Bones[i].BindPoseInverse(3, 3) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[10];
+				mdlSkeleton.Bones[i].BindPoseInverse(3, 4) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[11];
+
+				mdlSkeleton.Bones[i].BindPoseInverse(4, 1) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[12];
+				mdlSkeleton.Bones[i].BindPoseInverse(4, 2) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[13];
+				mdlSkeleton.Bones[i].BindPoseInverse(4, 3) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[14];
+				mdlSkeleton.Bones[i].BindPoseInverse(4, 4) = tgaModel.Skeleton.Bones[i].BindPoseInverse.Data[15];
+			}
+		}
 
 		for (size_t i = 0; i < tgaModel.Meshes.size(); i++)
 		{
@@ -281,6 +362,9 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 				{"COLOR", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"COLOR", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"COLOR", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+				{"BONEIDS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 			};
 
 			ID3D11InputLayout* inputLayout;
@@ -306,7 +390,14 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 		}
 
 		std::shared_ptr<Model> model = std::make_shared<Model>();
-		model->Init(mdlMeshData, someFilePath);
+		if (hasSkeleton)
+		{
+			model->Init(mdlMeshData, someFilePath, mdlSkeleton);
+		}
+		else
+		{
+			model->Init(mdlMeshData, someFilePath);
+		}
 		myModelRegistry.insert({ someFilePath, model });
 		return true;
 	}
@@ -323,6 +414,10 @@ bool ModelAssetHandler::Initialize()
 
 std::shared_ptr<Model> ModelAssetHandler::GetModel(const std::wstring& someFilePath)
 {
+	if (myModelRegistry.find(someFilePath) == myModelRegistry.end())
+	{
+		LoadModel(someFilePath);
+	}
 	return myModelRegistry[someFilePath];
 }
 
@@ -335,4 +430,36 @@ std::shared_ptr<ModelInstance> ModelAssetHandler::GetModelInstance(const std::ws
 	}
 	temp->Init(GetModel(aModelName));
 	return temp;
+}
+
+bool ModelAssetHandler::LoadAnimation(const std::wstring& aModelName, const std::wstring& someFilePath)
+{
+	const std::string ansiFileName = std::string(someFilePath.begin(), someFilePath.end());
+
+	std::shared_ptr<Model> model = GetModel(aModelName);
+	TGA::FBXAnimation tgaAnimation;
+
+	if (TGA::FBXImporter::LoadAnimation(ansiFileName, model->GetSkeleton()->BoneName, tgaAnimation))
+	{
+		Model::Animation result;
+
+		result.Length = tgaAnimation.Length;
+		result.Duration = tgaAnimation.Duration;
+		result.FramesPerSecond = tgaAnimation.FramesPerSecond;
+		result.Name = std::wstring(tgaAnimation.Name.begin(), tgaAnimation.Name.end());
+		result.Frames.resize(tgaAnimation.Frames.size());
+
+		for (size_t i = 0; i < result.Frames.size(); i++) 
+		{
+			for (size_t j = 0; j < tgaAnimation.Frames[i].LocalTransforms.size(); j++)
+			{
+				result.Frames[i].LocalTransforms.push_back(ConvertMatrix(tgaAnimation.Frames[i].LocalTransforms[j]));
+			}
+		}
+
+		model->AddAnimation(result);
+		return true;
+	}
+
+	return false;
 }

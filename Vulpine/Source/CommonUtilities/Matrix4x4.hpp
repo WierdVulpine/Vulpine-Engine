@@ -37,6 +37,8 @@ namespace CommonUtilities
 		std::array<std::array<T, 4>, 4> myMatrix;
 	};
 
+	typedef Matrix4x4<float> Matrix4x4f;
+
 	template <class T>
 	Matrix4x4<T>::Matrix4x4()
 	{

@@ -23,6 +23,9 @@ class ForwardRenderer
 	struct ObjectBufferData
 	{
 		Matrix4x4f World;
+		bool hasBones;
+		Vector3f paddington;
+		Matrix4x4f BoneData[128];
 	} myObjectBufferData;
 
 	struct MaterialBufferData

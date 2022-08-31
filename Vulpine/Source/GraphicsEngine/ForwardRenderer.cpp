@@ -66,6 +66,13 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
             auto meshData = model->GetMeshData(i);
 
             myObjectBufferData.World = model->GetTransform().GetMatrix();
+            myObjectBufferData.hasBones = model->HasBones();
+
+            if (myObjectBufferData.hasBones)
+            {
+                memcpy_s(&myObjectBufferData.BoneData[0], sizeof(Matrix4x4f) * 128, model->myBoneTransforms, sizeof(Matrix4x4f) * 128);
+            }
+
             ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
             result = DX11::Context->Map(myObjectBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &bufferData);
