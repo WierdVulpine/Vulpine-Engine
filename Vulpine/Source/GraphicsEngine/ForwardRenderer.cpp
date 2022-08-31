@@ -84,7 +84,7 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
             memcpy(bufferData.pData, &myObjectBufferData, sizeof(ObjectBufferData));
             DX11::Context->Unmap(myObjectBuffer.Get(), 0);
 
-            myMaterialBufferData.Albedo = meshData.myMaterial->GetAlbedo();
+
             ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
 
             result = DX11::Context->Map(myMaterialBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &bufferData);
@@ -95,6 +95,11 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
 
             memcpy(bufferData.pData, &myMaterialBufferData, sizeof(MaterialBufferData));
             DX11::Context->Unmap(myMaterialBuffer.Get(), 0);
+
+            if (meshData.myMaterial)
+            {
+                meshData.myMaterial->SetAsResource(myMaterialBuffer);
+            }
 
 
             DX11::Context->IASetVertexBuffers(0, 1, meshData.myVertexBuffer.GetAddressOf(), &meshData.myStride, &meshData.myOffset);

@@ -11,7 +11,7 @@ void ModelInstance::UpdateAnimationHierarchy(size_t aCurrentFrame, unsigned aBon
 
 	if (nextFrame >= myCurrentAnimation.Length)
 	{
-		nextFrame = 0;
+		aCurrentFrame = 0;
 	}
 
 	const Model::Skeleton::Bone& bone = myModel->GetSkeleton()->Bones[aBoneIdx];

@@ -5,8 +5,9 @@
 #include <fstream>
 #include "FBXImporter.h"
 #include "ModelInstance.h"
-#include "Material.h"
+//#include "Material.h"
 #include <random>
+#include "TextureAssetHandler.h"
 
 float GetRand()
 {
@@ -78,10 +79,25 @@ bool ModelAssetHandler::InitUnitCube()
 		}
 	};
 
-	std::wstring wideMatName = L"Default_M.dds";
+	mdlVerticies[0].UVs[0] = { 0,0 };
+	mdlVerticies[1].UVs[0] = { 1,0 };
+	mdlVerticies[2].UVs[0] = { 0,1 };
+	mdlVerticies[3].UVs[0] = { 1,0 };
+	mdlVerticies[4].UVs[0] = { 1,1 };
+	mdlVerticies[5].UVs[0] = { 0,0 };
+	mdlVerticies[6].UVs[0] = { 1,0 };
+	mdlVerticies[7].UVs[0] = { 0,1 };
 
-	std::shared_ptr<Material> meshMaterial;
-	if (myMaterialRegistry.find(wideMatName) != myMaterialRegistry.end())
+	std::wstring wideMatName = L"Default_C.dds";
+
+	std::shared_ptr<Material> meshMaterial = std::make_shared<Material>();
+
+	if (TextureAssetHandler::LoadTexture(wideMatName))
+	{
+		meshMaterial->SetAlbedoTexture(TextureAssetHandler::GetTexture(wideMatName));
+	}
+
+	/*if (myMaterialRegistry.find(wideMatName) != myMaterialRegistry.end())
 	{
 		meshMaterial = myMaterialRegistry[wideMatName];
 	}
@@ -91,7 +107,7 @@ bool ModelAssetHandler::InitUnitCube()
 		meshMaterial->Init(wideMatName, { GetRand(), GetRand(), GetRand() });
 
 		myMaterialRegistry.insert({ wideMatName, meshMaterial });
-	}
+	}*/
 
 	HRESULT result;
 
@@ -182,7 +198,12 @@ bool ModelAssetHandler::InitUnitCube()
 		{"COLOR", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 
 		{"BONEIDS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	ID3D11InputLayout* inputLayout;
@@ -266,24 +287,19 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 			TGA::FBXModel::FBXMesh& mesh = tgaModel.Meshes[i];
 
 			std::wstring wideMatName = someFilePath;
+
 			wideMatName.pop_back();
 			wideMatName.pop_back();
 			wideMatName.pop_back();
 			wideMatName.pop_back();
 
-			wideMatName = wideMatName + L"_M.dds";
+			wideMatName = wideMatName + L"_C.dds";
 
-			std::shared_ptr<Material> meshMaterial;
-			if (myMaterialRegistry.find(wideMatName) != myMaterialRegistry.end())
+			std::shared_ptr<Material> meshMaterial = std::make_shared<Material>();
+
+			if (TextureAssetHandler::LoadTexture(wideMatName))
 			{
-				meshMaterial = myMaterialRegistry[wideMatName];
-			}
-			else
-			{
-				meshMaterial = std::make_shared<Material>();
-				meshMaterial->Init(wideMatName, { GetRand(), GetRand(), GetRand ()});
-
-				myMaterialRegistry.insert({ wideMatName, meshMaterial });
+				meshMaterial->SetAlbedoTexture(TextureAssetHandler::GetTexture(wideMatName));
 			}
 
 
@@ -364,7 +380,12 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 				{"COLOR", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 
 				{"BONEIDS", 0, DXGI_FORMAT_R32G32B32A32_UINT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+				{"BONEWEIGHTS", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 			};
 
 			ID3D11InputLayout* inputLayout;

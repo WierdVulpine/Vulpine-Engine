@@ -4,7 +4,11 @@ PixelOutput main(VertexToPixel input)
 {
 	PixelOutput result;
 
-	result.myColor = input.myVxColor * float4(MB_Albedo, 1);
+	// UV TEst
+	/*result.myColor = float4(input.myUV.r, input.myUV.g, 0, 1);*/
+
+	result.myColor.rgb = albedoTexture.Sample(defaultSampler, input.myUV).rgb;
+	result.myColor.a = 1;
 
 	return result;
 }

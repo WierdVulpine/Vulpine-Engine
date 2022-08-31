@@ -28,5 +28,10 @@ VertexToPixel main(VertexInput input)
 	result.myVxColor3 = input.myVxColor3;
 	result.myVxColor4 = input.myVxColor4;
 
+	result.myUV  = input.myUV;
+	result.myUV2 = input.myUV2;
+	result.myUV3 = input.myUV3;
+	result.myUV4 = input.myUV4;
+
 	return result;
 }
