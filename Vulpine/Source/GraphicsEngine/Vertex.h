@@ -25,6 +25,10 @@ struct Vertex
 		{0, 0}
 	};
 
+	CommonUtilities::Vector3f Tangent = { 0,0,0 };
+	CommonUtilities::Vector3f Binormal = { 0,0,0 };
+	CommonUtilities::Vector3f Normal = { 0,0,0 };
+
 	Vertex(float aX, float aY, float aZ, float aR, float aG, float aB, float aA)
 	{
 		Position = { aX, aY, aZ, 1 };
@@ -63,6 +67,18 @@ struct Vertex
 
 		UVs[2].x = aVertex.UVs[2][0];
 		UVs[2].y = aVertex.UVs[2][1];
+
+		Tangent.x = aVertex.Tangent[0];
+		Tangent.y = aVertex.Tangent[1];
+		Tangent.z = aVertex.Tangent[2];
+
+		Binormal.x = aVertex.Binormal[0];
+		Binormal.y = aVertex.Binormal[1];
+		Binormal.z = aVertex.Binormal[2];
+
+		Normal.x = aVertex.Normal[0];
+		Normal.y = aVertex.Normal[1];
+		Normal.z = aVertex.Normal[2];
 
 		return *this;
 	}

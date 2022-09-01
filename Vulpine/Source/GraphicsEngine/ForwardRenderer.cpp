@@ -100,7 +100,7 @@ void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::
             {
                 meshData.myMaterial->SetAsResource(myMaterialBuffer);
             }
-
+            
 
             DX11::Context->IASetVertexBuffers(0, 1, meshData.myVertexBuffer.GetAddressOf(), &meshData.myStride, &meshData.myOffset);
             DX11::Context->IASetIndexBuffer(meshData.myIndexBuffer.Get(), DXGI_FORMAT_R32_UINT, 0);

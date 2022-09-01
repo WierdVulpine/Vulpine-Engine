@@ -203,7 +203,11 @@ bool ModelAssetHandler::InitUnitCube()
 		{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 		{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-		{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+		{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+		{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+		{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	ID3D11InputLayout* inputLayout;
@@ -286,22 +290,32 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 		{
 			TGA::FBXModel::FBXMesh& mesh = tgaModel.Meshes[i];
 
-			std::wstring wideMatName = someFilePath;
+			std::wstring textureName = someFilePath;
+			std::wstring normalName = someFilePath;
 
-			wideMatName.pop_back();
-			wideMatName.pop_back();
-			wideMatName.pop_back();
-			wideMatName.pop_back();
+			textureName.pop_back();
+			textureName.pop_back();
+			textureName.pop_back();
+			textureName.pop_back();
 
-			wideMatName = wideMatName + L"_C.dds";
+			normalName.pop_back();
+			normalName.pop_back();
+			normalName.pop_back();
+			normalName.pop_back();
+
+			textureName = textureName + L"_C.dds";
+			normalName = normalName + L"_N.dds";
 
 			std::shared_ptr<Material> meshMaterial = std::make_shared<Material>();
 
-			if (TextureAssetHandler::LoadTexture(wideMatName))
+			if (TextureAssetHandler::LoadTexture(textureName))
 			{
-				meshMaterial->SetAlbedoTexture(TextureAssetHandler::GetTexture(wideMatName));
+				meshMaterial->SetAlbedoTexture(TextureAssetHandler::GetTexture(textureName));
 			}
-
+			if (TextureAssetHandler::LoadTexture(normalName))
+			{
+				meshMaterial->SetNormalTexture(TextureAssetHandler::GetTexture(normalName));
+			}
 
 			std::vector<Vertex> mdlVertecies;
 			mdlVertecies.resize(mesh.Vertices.size());
@@ -385,7 +399,12 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 				{"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"TEXCOORD", 1, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
 				{"TEXCOORD", 2, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
-				{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+				{"TEXCOORD", 3, DXGI_FORMAT_R32G32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+
+				{"TANGENT", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"BINORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0},
+				{"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, D3D11_APPEND_ALIGNED_ELEMENT, D3D11_INPUT_PER_VERTEX_DATA, 0}
+
 			};
 
 			ID3D11InputLayout* inputLayout;
