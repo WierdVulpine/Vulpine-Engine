@@ -55,17 +55,12 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY, unsigned someWid
 
 	myForwardRenderer.Initialize();
 
-	if (TGA::FBXImporter::LoadModel("SM_Particle_Chest.fbx", TGA::FBXModel()))
-	{
-		int t = 1;
-	}
-
     return true;
 }
 
 void GraphicsEngine::BeginFrame()
 {
-	myDX11FrameWork.BeginFrame({ 0,0.94f,0.98,1 });
+	myDX11FrameWork.BeginFrame({ myClearColor.x,myClearColor.y,myClearColor.z,1 });
 }
 
 void GraphicsEngine::EndFrame()

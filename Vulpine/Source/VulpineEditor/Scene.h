@@ -10,7 +10,7 @@ class GraphicsEngine;
 class Scene
 {
 public:
-	Scene() = default;
+	Scene(std::shared_ptr<GraphicsEngine> aEnginePtr) : myEnginePtr(aEnginePtr) {}
 	~Scene() = default;
 
 	template<typename T>
@@ -31,5 +31,15 @@ private:
 	std::vector<std::shared_ptr<ModelInstance>> mySceneObjects;
 
 	std::shared_ptr<Camera> myMainCamera;
+
+	std::shared_ptr<GraphicsEngine> myEnginePtr;
+
+	void LoadSettings();
+	void LoadScene();
+
+	void SaveSettings();
+	void SaveScene();
+
+
 };
 

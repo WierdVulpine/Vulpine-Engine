@@ -25,12 +25,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
     MSG msg = { 0 };
 
-    GraphicsEngine graphicsEngine;
+    std::shared_ptr<GraphicsEngine> graphicsEngine = std::make_shared<GraphicsEngine>();
 
 
-    const SIZE windowSize = { 1200, 800 };
+    const SIZE windowSize = { 1600, 1000 };
 
-    bool shouldRun = graphicsEngine.Initialize(
+    bool shouldRun = graphicsEngine->Initialize(
         (GetSystemMetrics(SM_CXSCREEN) - windowSize.cx) / 2,
         (GetSystemMetrics(SM_CYSCREEN) - windowSize.cy) / 2,
         windowSize.cx,
@@ -38,16 +38,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         false
     );
 
-    Scene myScene;
+    Scene myScene(graphicsEngine);
     myScene.Init();
 
-    Input::SetHandle(graphicsEngine.GetWindowHandle());
+    Input::SetHandle(graphicsEngine->GetWindowHandle());
 
 #ifdef _DEBUG
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    ImGui_ImplWin32_Init(graphicsEngine.GetWindowHandle());
+    ImGui_ImplWin32_Init(graphicsEngine->GetWindowHandle());
     ImGui_ImplDX11_Init(DX11::Device.Get(), DX11::Context.Get());
     ImGui::StyleColorsDark();
 #endif
@@ -60,7 +60,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         {
 
 #ifdef _DEBUG
-            ImGui_ImplWin32_WndProcHandler(graphicsEngine.GetWindowHandle(), msg.message, msg.wParam, msg.lParam);
+            ImGui_ImplWin32_WndProcHandler(graphicsEngine->GetWindowHandle(), msg.message, msg.wParam, msg.lParam);
 #endif // _DEBUG
 
             TranslateMessage(&msg);
@@ -85,7 +85,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         // This would cause the game to only update if there are messages and also run
         // the update several times per frame (once for each message).
 
-        graphicsEngine.BeginFrame();
+        graphicsEngine->BeginFrame();
 
 #ifdef _DEBUG
         ImGui_ImplDX11_NewFrame();
@@ -94,7 +94,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 #endif // _DEBUG
 
-        graphicsEngine.RenderFrame();
+        graphicsEngine->RenderFrame();
 
         myScene.Update();
         myScene.Render();
@@ -105,7 +105,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 #endif // _DEBUG
 
 
-        graphicsEngine.EndFrame();
+        graphicsEngine->EndFrame();
 
         Input::UpdateInput();
     }

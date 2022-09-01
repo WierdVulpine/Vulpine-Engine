@@ -32,6 +32,8 @@ public:
 		myCurrentAnimation = myModel->GetSkeleton()->Animations.at(aAnimationName);
 	}
 
+	std::wstring GetName() { return myModel->GetName(); }
+
 	FORCEINLINE Model::MeshData const& GetMeshData(unsigned int anIndex) const { return myModel->GetMeshData(anIndex); }
 	FORCEINLINE size_t GetNumMeshes() const { return myModel->GetNumMeshes(); }
 

@@ -25,12 +25,16 @@ public:
 	[[nodiscard]] HWND FORCEINLINE GetWindowHandle() const { return myWindowHandle; }
 	[[nodiscard]] SIZE FORCEINLINE GetWindowSize() const { return myWindowSize; }
 
+	Vector4f& GetClearColor() { return myClearColor; }
+
 private:
 	DX11 myDX11FrameWork;
 	ForwardRenderer	myForwardRenderer;
 
 	std::shared_ptr<Model> myModel;
 	std::shared_ptr<Camera> myCamera;
+
+	Vector4f myClearColor;
 
 };
 
