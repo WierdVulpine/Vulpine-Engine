@@ -12,6 +12,7 @@
 #include "stringbuffer.h"
 #include "filereadstream.h"
 #include "filewritestream.h"
+#include "LightAssetHandler.h"
 
 void Scene::Init()
 {
@@ -34,6 +35,9 @@ void Scene::Init()
 	AddGameObject(temp);
 	AddGameObject(temp1);
 	AddGameObject(temp2);
+
+	LightAssetHandler::CreateDirectionalLight({ 0,1,1 }, 500, { 0,0,-1 });
+	LightAssetHandler::CreateEnvirometalLight(L"skansen_cubemap.dds");
 
 	LoadSettings();
 	LoadScene();
@@ -134,6 +138,12 @@ void Scene::Update()
 		SaveScene();
 	}
 
+	float DirLightInt = LightAssetHandler::GetDirectionalLight()->myLightBufferData.Intensity;
+
+	ImGui::DragFloat("DirLightInt", &DirLightInt);
+
+	LightAssetHandler::GetDirectionalLight()->myLightBufferData.Intensity = DirLightInt;
+
 	ImGui::End();
 
 	CommonUtilities::Vector3f dir;
@@ -178,7 +188,6 @@ void Scene::Update()
 
 void Scene::Render()
 {
-	
 	for (size_t i = 0; i < mySceneObjects.size(); i++)
 	{
 		Renderer::AddModel(mySceneObjects[i]);

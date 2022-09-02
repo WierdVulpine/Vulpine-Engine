@@ -22,17 +22,16 @@ public:
 		float Padding;
 	};
 
-protected:
-	LightBufferData myLightBufferData;
-
 public:
+	LightBufferData myLightBufferData;
 
 	virtual ~Light() override = default;
 	virtual void Init(CommonUtilities::Vector3f aColor, float aIntensity);
 
 	virtual void SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer) = 0;
 
-	FORCEINLINE CommonUtilities::Vector4f GetColor() const { return { myLightBufferData.Color.x, myLightBufferData.Color.y, myLightBufferData.Color.z, 1 }; }
+	FORCEINLINE CommonUtilities::Vector4f GetColor() const { return { myLightBufferData.Color.x, myLightBufferData.Color.y,
+		                                                              myLightBufferData.Color.z, 1 }; }
 	FORCEINLINE float GetIntensity() const { return myLightBufferData.Intensity; }
 };
 

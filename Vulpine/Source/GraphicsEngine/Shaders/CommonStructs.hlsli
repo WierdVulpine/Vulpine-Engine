@@ -45,6 +45,8 @@ Texture2D albedoTexture : register(t0);
 
 Texture2D normalTexture : register(t1);
 
+TextureCube enviromentTexture : register(t10);
+
 struct PixelOutput
 {
 	float4 myColor : SV_TARGET;
@@ -68,4 +70,12 @@ cbuffer MaterialBuffer : register(b2)
 {
 	float3 MB_Albedo;
 	float padding;
+}
+
+cbuffer LightBuffer : register(b3)
+{
+	float3 LB_Color;
+	float LB_Intensity;
+	float3 LB_Direction;
+	float LB_Padding;
 }

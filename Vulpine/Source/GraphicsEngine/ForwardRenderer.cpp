@@ -33,15 +33,33 @@ bool ForwardRenderer::Initialize()
         return false;
     }
 
+    bufferDescription.ByteWidth = sizeof(Light::LightBufferData);
+    result = DX11::Device->CreateBuffer(&bufferDescription, nullptr, myLightBuffer.GetAddressOf());
+    if (FAILED(result))
+    {
+        return false;
+    }
+
     return true;
 }
 
-void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList)
+void ForwardRenderer::Render(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList, const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnviromentLight>& anEnviromentalLight)
 {
     if (!aCamera)
     {
         return;
     }
+
+    if (aDirectionalLight)
+    {
+        aDirectionalLight->SetAsResource(myLightBuffer);
+    }
+
+    if (anEnviromentalLight)
+    {
+        anEnviromentalLight->SetAsResource(nullptr);
+    }
+
     HRESULT result = S_FALSE;
     D3D11_MAPPED_SUBRESOURCE bufferData;
 

@@ -1,6 +1,7 @@
 #include "Renderer.h"
 #include "Model.h"
 #include "ForwardRenderer.h"
+#include "LightAssetHandler.h"
 
 void Renderer::SetCamera(std::shared_ptr<Camera> aCamera)
 {
@@ -14,6 +15,6 @@ void Renderer::AddModel(const std::shared_ptr<ModelInstance>& aModel)
 
 void Renderer::Render(ForwardRenderer& aRenderer)
 {
-	aRenderer.Render(myCameraPtr, myStorage.myModels);
+	aRenderer.Render(myCameraPtr, myStorage.myModels, LightAssetHandler::GetDirectionalLight(), LightAssetHandler::GetEnviromentLight());
 	myStorage.myModels.clear();
 }
