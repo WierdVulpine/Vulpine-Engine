@@ -45,50 +45,181 @@ bool ModelAssetHandler::InitUnitCube()
 {
 	std::vector<Vertex> mdlVerticies =
 	{
-		{
-			50.0f, 50.0f, 50.0f,
-			1 ,0, 0, 1
-		},
-		{
-			50.0f, 50.0f, -50.0f,
-			0 , 1, 0, 1
-		},
-		{
-			50.0f, -50.0f, 50.0f,
-			0 , 0, 1, 1
-		},
-		{
-			-50.0f, 50.0f, 50.0f,
-			1 , 0, 1, 1
-		},
-		{
-			50.0f, -50.0f, -50.0f,
-			0 , 1, 1, 1
-		},
-		{
-			-50.0f, 50.0f, -50.0f,
-			1 , 1, 0, 1
-		},
-		{
-			-50.0f, -50.0f, 50.0f,
-			1 , 1, 1, 1
-		},
-		{
-			-50.0f, -50.0f, -50.0f,
-			0 , 0, 0, 1
-		}
+	{
+		-50.f, -50.f, -50.f, 1,
+		0, 1, 0, 1
+	},
+	{
+		-50.f, 50.f, -50.f, 1,
+		0, 0, 1, 1
+	},
+	{
+		50.f, 50.f, -50.f, 1,
+		1, 0, 1, 1
+	},
+	{
+		50.f, -50.f, -50.f, 1,
+		1, 1, 1, 1
+	},
+		// Back Face
+	{
+		-50.f, -50.f, 50.f, 1,
+		1, 1, 1, 1
+	},
+	{
+		50.f, -50.f, 50.f, 1,
+		0, 1, 1, 1
+	},
+	{
+		50.f, 50.f, 50.f, 1,
+		0, 0, 1, 1
+	},
+	{
+		-50.f, 50.f, 50.f, 1,
+		1, 0, 1, 1
+	},
+		// Top Face
+	{
+		-50.f, 50.f, -50.f, 1,
+		0, 1, 1, 1
+	},
+	{
+		-50.f, 50.f, 50.f, 1,
+		0, 0, 1, 1
+	},
+	{
+		50.f, 50.f, 50.f, 1,
+		1, 0, 1, 1
+	},
+	{
+		50.f, 50.f, -50.f, 1,
+		1, 1, 1, 1
+	},
+		// Bottom Face
+	{
+		-50.f, -50.f, -50.f, 1,
+		1, 1, 1, 1
+	},
+	{
+		50.f, -50.f, -50.f, 1,
+		0, 1, 1, 1
+	},
+	{
+		50.f, -50.f, 50.f, 1,
+		0, 0, 1, 1
+	},
+	{
+		-50.f, -50.f, 50.f, 1,
+		1, 0, 1, 1
+	},
+		// Left Face
+	{
+		-50.f, -50.f, 50.f, 1,
+		0, 1, 1, 1
+	},
+	{
+		-50.f, 50.f, 50.f, 1,
+		0, 0, 1, 1
+	},
+	{
+		-50.f, 50.f, -50.f, 1,
+		1, 0, 1, 1
+	},
+	{
+		-50.f, -50.f, -50.f, 1,
+		1, 1, 1, 1
+	},
+		// Right Face
+	{
+		50.f, -50.f, -50.f, 1,
+		0, 1, 1, 1
+	},
+	{
+		50.f, 50.f, -50.f, 1,
+		0, 0, 1, 1
+	},
+	{
+		50.f, 50.f, 50.f, 1,
+		1, 0, 1, 1
+	},
+	{
+		50.f, -50.f, 50.f, 1,
+		1, 1, 1, 1
+	}
 	};
 
-	mdlVerticies[0].UVs[0] = { 0,0 };
-	mdlVerticies[1].UVs[0] = { 1,0 };
-	mdlVerticies[2].UVs[0] = { 0,1 };
-	mdlVerticies[3].UVs[0] = { 1,0 };
-	mdlVerticies[4].UVs[0] = { 1,1 };
-	mdlVerticies[5].UVs[0] = { 0,0 };
-	mdlVerticies[6].UVs[0] = { 1,0 };
-	mdlVerticies[7].UVs[0] = { 0,1 };
+	mdlVerticies[0].UVs[0] = { 0, 1 };
+	mdlVerticies[1].UVs[0] = { 0, 0 };
+	mdlVerticies[2].UVs[0] = { 1, 0 };
+	mdlVerticies[3].UVs[0] = { 1, 1 };
+
+	mdlVerticies[4].UVs[0] = { 1, 1 };
+	mdlVerticies[5].UVs[0] = { 0, 1 };
+	mdlVerticies[6].UVs[0] = { 0, 0 };
+	mdlVerticies[7].UVs[0] = { 1, 0 };
+
+	mdlVerticies[8].UVs[0] = { 0, 1 };
+	mdlVerticies[9].UVs[0] = { 0, 0 };
+	mdlVerticies[10].UVs[0] = { 1, 0 };
+	mdlVerticies[11].UVs[0] = { 1, 1 };
+
+	mdlVerticies[12].UVs[0] = { 0, 0 };
+	mdlVerticies[13].UVs[0] = { 1, 0 };
+	mdlVerticies[14].UVs[0] = { 1, 1 };
+	mdlVerticies[15].UVs[0] = { 0, 1 };
+
+	mdlVerticies[16].UVs[0] = { 0, 1 };
+	mdlVerticies[17].UVs[0] = { 0, 0 };
+	mdlVerticies[18].UVs[0] = { 1, 0 };
+	mdlVerticies[19].UVs[0] = { 1, 1 };
+
+	mdlVerticies[20].UVs[0] = { 0, 1 };
+	mdlVerticies[21].UVs[0] = { 0, 0 };
+	mdlVerticies[22].UVs[0] = { 1, 0 };
+	mdlVerticies[23].UVs[0] = { 1, 1 };
+
+	for (int i = 0; i < 24; i++)
+	{
+		if (i < 4)
+		{
+			mdlVerticies[i].Tangent = { 1, 0, 0 };
+			mdlVerticies[i].Binormal = { 0, -1, 0 };
+			mdlVerticies[i].Normal = { 0, 0, -1 };
+		}
+		else if (i < 8)
+		{
+			mdlVerticies[i].Tangent = { -1, 0, 0 };
+			mdlVerticies[i].Binormal = { 0, -1, 0 };
+			mdlVerticies[i].Normal = { 0, 0, 1 };
+		}
+		else if (i < 12)
+		{
+			mdlVerticies[i].Tangent = { 1, 0, 0 };
+			mdlVerticies[i].Binormal = { 0, 0, -1 };
+			mdlVerticies[i].Normal = { 0, 1, 0 };
+		}
+		else if (i < 16)
+		{
+			mdlVerticies[i].Tangent = { 1, 0, 0 };
+			mdlVerticies[i].Binormal = { 0, 0, 1 };
+			mdlVerticies[i].Normal = { 0, -1, 0 };
+		}
+		else if (i < 20)
+		{
+			mdlVerticies[i].Tangent = { 0, 0, -1 };
+			mdlVerticies[i].Binormal = { 0, -1, 0 };
+			mdlVerticies[i].Normal = { -1, 0, 0 };
+		}
+		else
+		{
+			mdlVerticies[i].Tangent = { 0, 0, 1 };
+			mdlVerticies[i].Binormal = { 0, -1, 0 };
+			mdlVerticies[i].Normal = { 1, 0, 0 };
+		}
+	}
 
 	std::wstring wideMatName = L"Default_C.dds";
+	std::wstring normalName = L"Default_N.dds";
 
 	std::shared_ptr<Material> meshMaterial = std::make_shared<Material>();
 
@@ -96,18 +227,10 @@ bool ModelAssetHandler::InitUnitCube()
 	{
 		meshMaterial->SetAlbedoTexture(TextureAssetHandler::GetTexture(wideMatName));
 	}
-
-	/*if (myMaterialRegistry.find(wideMatName) != myMaterialRegistry.end())
+	if (TextureAssetHandler::LoadTexture(normalName))
 	{
-		meshMaterial = myMaterialRegistry[wideMatName];
+		meshMaterial->SetNormalTexture(TextureAssetHandler::GetTexture(normalName));
 	}
-	else
-	{
-		meshMaterial = std::make_shared<Material>();
-		meshMaterial->Init(wideMatName, { GetRand(), GetRand(), GetRand() });
-
-		myMaterialRegistry.insert({ wideMatName, meshMaterial });
-	}*/
 
 	HRESULT result;
 
@@ -128,24 +251,32 @@ bool ModelAssetHandler::InitUnitCube()
 
 	std::vector<unsigned int> mdlIndecies =
 	{
-		0,2,4, // Right Side
-		4,1,0,
+		// Front Face
+		0, 1, 2,
+		0, 2, 3,
 
-		3,0,1, // Top Side
-		1,5,3,
+		// Back Face
+		4, 5, 6,
+		4, 6, 7,
 
-		3,6,2, // Back Side
-		2,0,3,
+		// Top Face
+		8, 9, 10,
+		8, 10, 11,
 
-		3,5,7, // Left Side
-		7,6,3,
+		// Bottom Face
+		12, 13, 14,
+		12, 14, 15,
 
-		5,1,4, // Front Side
-		4,7,5,
+		// Left Face
+		16, 17, 18,
+		16, 18, 19,
 
-		7,4,2, // Bottom Side
-		2,6,7,
+		// Right Face
+		20, 21, 22,
+		20, 22, 23
 	};
+
+
 
 	D3D11_BUFFER_DESC indexBufferDesc{};
 	indexBufferDesc.ByteWidth = static_cast<UINT>(mdlIndecies.size()) * static_cast<UINT>(sizeof(unsigned int));

@@ -36,7 +36,7 @@ void Scene::Init()
 	AddGameObject(temp1);
 	AddGameObject(temp2);
 
-	LightAssetHandler::CreateDirectionalLight({ 0,1,1 }, 500, { 0,0,-1 });
+	LightAssetHandler::CreateDirectionalLight({ 1,1,1 }, 1, { 0,0,-1 });
 	LightAssetHandler::CreateEnvirometalLight(L"skansen_cubemap.dds");
 
 	LoadSettings();

@@ -29,9 +29,9 @@ struct Vertex
 	CommonUtilities::Vector3f Binormal = { 0,0,0 };
 	CommonUtilities::Vector3f Normal = { 0,0,0 };
 
-	Vertex(float aX, float aY, float aZ, float aR, float aG, float aB, float aA)
+	Vertex(float aX, float aY, float aZ, float aW, float aR, float aG, float aB, float aA)
 	{
-		Position = { aX, aY, aZ, 1 };
+		Position = { aX, aY, aZ, aW };
 		VertexColors[0] = { aR, aG, aB, aA };
 	}
 

@@ -4,12 +4,10 @@ PixelOutput main(VertexToPixel input)
 {
 	PixelOutput result;
 
-	const float3x3 TBN = float3x3
-	(
+	const float3x3 TBN = float3x3(
 		normalize(input.myTangent),
 		normalize(input.myBinormal),
-		normalize(input.myNormal)
-	);
+		normalize(input.myNormal));
 
 	float3 normalMap = normalTexture.Sample(defaultSampler, input.myUV).agr;
 	normalMap.z = 0;
@@ -20,6 +18,7 @@ PixelOutput main(VertexToPixel input)
 
 	const float3 pixelNormal = normalize(mul(normalMap, TBN));
 
+	//Default light rendering
 	float3 albedo = albedoTexture.Sample(defaultSampler, input.myUV).rgb;
 	const float3 L = -1 * normalize(LB_Direction);
 	const float3 N = pixelNormal;

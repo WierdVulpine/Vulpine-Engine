@@ -23,7 +23,7 @@ void DirectionalLight::SetAsResource(ComPtr<ID3D11Buffer> aLightBuffer)
 
 	DX11::Context->Unmap(aLightBuffer.Get(), 0);
 
-	DX11::Context->PSGetConstantBuffers(
+	DX11::Context->PSSetConstantBuffers(
 		3,
 		1,
 		aLightBuffer.GetAddressOf()
