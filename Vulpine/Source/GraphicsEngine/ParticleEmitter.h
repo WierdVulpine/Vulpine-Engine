@@ -7,6 +7,8 @@
 #include <dxgi.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include "Texture.h"
+#include <memory>
 
 using namespace Microsoft::WRL;
 
@@ -61,5 +63,19 @@ class ParticleEmitter
 	UINT myPrimitiveTopology;
 	ComPtr<ID3D11InputLayout> myInputLayout;
 
+	std::shared_ptr<Texture> myTexture;
+
+	void InitParticle(size_t aParticleIndex);
+
+public:
+	virtual ~ParticleEmitter() = default;
+
+	virtual bool Init(const ParticleEmitterTemplate& aTamlate);
+	virtual void Update(float someDeltaTime);
+
+	virtual void SetAsResource() const;
+	virtual void Draw() const;
+
+	FORCEINLINE const EmitterSettingsData& GetEmitterSettings() const { return myEmitterSettings; }
 };
 
