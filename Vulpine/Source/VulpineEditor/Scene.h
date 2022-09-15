@@ -3,6 +3,7 @@
 #include <vector>
 #include "SceneObject.h"
 #include "ModelInstance.h"
+#include "ParticleAssetHandler.h"
 
 class Camera;
 class GraphicsEngine;
@@ -33,6 +34,13 @@ private:
 	std::shared_ptr<Camera> myMainCamera;
 
 	std::shared_ptr<GraphicsEngine> myEnginePtr;
+
+	std::shared_ptr<ParticleSystem> myTestSystem;
+
+	float myLerpValue;
+
+	float myFirstPresetIndex;
+	float mySecondPresetIndex;
 
 	void LoadSettings();
 	void LoadScene();

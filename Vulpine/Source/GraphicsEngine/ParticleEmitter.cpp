@@ -2,14 +2,16 @@
 #include "TextureAssetHandler.h"
 #include "DX11.h"
 #include <fstream>
+#include <UtilityFunctions.h>
 
 void ParticleEmitter::InitParticle(size_t aParticleIndex)
 {
     myParticles[aParticleIndex].Color = myEmitterSettings.StartColor;
     myParticles[aParticleIndex].LifeTime = 0;
-    myParticles[aParticleIndex].Position = { 0, 0 ,0 ,1 };
+    myParticles[aParticleIndex].Position = { static_cast<float>(rand() % 100), 0, 100, 1 };
     myParticles[aParticleIndex].Scale = { myEmitterSettings.StartSize, myEmitterSettings.StartSize, myEmitterSettings.StartSize };
     myParticles[aParticleIndex].Velocity = myEmitterSettings.StartVelocity;
+    myParticles[aParticleIndex].LerpVal = 0;
 }
 
 bool ParticleEmitter::Init(const ParticleEmitterTemplate& aTamlate)
@@ -22,10 +24,7 @@ bool ParticleEmitter::Init(const ParticleEmitterTemplate& aTamlate)
 
     myParticles.resize(maxNumberOfParticles);
 
-    for (size_t i = 0; i < myParticles.size(); i++)
-    {
-        InitParticle(i);
-    }
+    myMaxNumberOfParticles = maxNumberOfParticles;
 
     HRESULT result;
 
@@ -39,6 +38,7 @@ bool ParticleEmitter::Init(const ParticleEmitterTemplate& aTamlate)
     vertexSubresourceData.pSysMem = &myParticles[0];
 
     result = DX11::Device->CreateBuffer(&vertexBufferDesc, &vertexSubresourceData, myVertexBuffer.GetAddressOf());
+    myStride = sizeof(ParticleVertex);
 
     // Pixel Shader
     std::ifstream psFile;
@@ -60,7 +60,7 @@ bool ParticleEmitter::Init(const ParticleEmitterTemplate& aTamlate)
     {
         return false;
     }
-    psFile.close();
+    vsFile.close();
 
     // Geometry Shader
     std::ifstream gsFile;
@@ -100,15 +100,49 @@ bool ParticleEmitter::Init(const ParticleEmitterTemplate& aTamlate)
 
 void ParticleEmitter::Update(float someDeltaTime)
 {
+    mySpawnTimer += someDeltaTime;
+    if (mySpawnTimer >= 1 / myEmitterSettings.SpawnRate /*&&  myParticleCounter < myMaxNumberOfParticles*/)
+    {
+        InitParticle(myParticleCounter);
+        myParticleCounter++;
+        if (myParticleCounter == myMaxNumberOfParticles)
+        {
+            myParticleCounter = 0;
+        }
+        mySpawnTimer = 0;
+    }
     for (size_t i = 0; i < myParticles.size(); i++)
     {
         ParticleVertex& particle = myParticles[i];
         particle.LifeTime += someDeltaTime;
 
-        if (particle.LifeTime >= myEmitterSettings.LifeTime)
+        particle.LerpVal += (1 / myEmitterSettings.LifeTime) * someDeltaTime;
+
+        particle.Velocity.x = CommonUtilities::Lerp(myEmitterSettings.StartVelocity.x, myEmitterSettings.EndVelocity.x, particle.LerpVal);
+        if (myEmitterSettings.GravityScale == 0)
         {
-            InitParticle(i);
+            particle.Velocity.y = CommonUtilities::Lerp(myEmitterSettings.StartVelocity.y, myEmitterSettings.EndVelocity.y, particle.LerpVal);
         }
+        particle.Velocity.z = CommonUtilities::Lerp(myEmitterSettings.StartVelocity.z, myEmitterSettings.EndVelocity.z, particle.LerpVal);
+
+        myParticles[i].Velocity.y -= someDeltaTime * myEmitterSettings.GravityScale;
+        myParticles[i].Position += {myParticles[i].Velocity.x * someDeltaTime, myParticles[i].Velocity.y* someDeltaTime, myParticles[i].Velocity.z* someDeltaTime, 0};
+
+        myParticles[i].Color =
+        {
+            CommonUtilities::Lerp(myEmitterSettings.StartColor.x, myEmitterSettings.EndColor.x, particle.LerpVal),
+            CommonUtilities::Lerp(myEmitterSettings.StartColor.y, myEmitterSettings.EndColor.y, particle.LerpVal),
+            CommonUtilities::Lerp(myEmitterSettings.StartColor.z, myEmitterSettings.EndColor.z, particle.LerpVal),
+            CommonUtilities::Lerp(myEmitterSettings.StartColor.w, myEmitterSettings.EndColor.w, particle.LerpVal)
+        };
+
+        particle.Scale =
+        {
+            CommonUtilities::Lerp(myEmitterSettings.StartSize, myEmitterSettings.EndSize, particle.LerpVal),
+            CommonUtilities::Lerp(myEmitterSettings.StartSize, myEmitterSettings.EndSize, particle.LerpVal),
+            CommonUtilities::Lerp(myEmitterSettings.StartSize, myEmitterSettings.EndSize, particle.LerpVal)
+        };
+
     }
 }
 
@@ -118,26 +152,20 @@ void ParticleEmitter::SetAsResource() const
 
     D3D11_MAPPED_SUBRESOURCE bufferData;
     ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
-    result = DX11::Context->Map(
-        myVertexBuffer.Get(),
-        0,
-        D3D11_MAP_WRITE_DISCARD,
-        0,
-        &bufferData
-    );
+    result = DX11::Context->Map(myVertexBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &bufferData);
 
-    memcpy_s(
-        bufferData.pData,
-        sizeof(ParticleVertex) * myParticles.size(),
-        &myParticles[0],
-        sizeof(ParticleVertex) * myParticles.size()
-    );
+    if (FAILED(result))
+    {
+        //std::cout << "Particle System Failed To Set Resource" << std::endl;
+    }
+
+    memcpy_s(bufferData.pData, sizeof(ParticleVertex) * myParticles.size(), &myParticles[0], sizeof(ParticleVertex) * myParticles.size());
 
     DX11::Context->Unmap(myVertexBuffer.Get(), 0);
 
-    DX11::Context->IASetPrimitiveTopology(static_cast<D3D_PRIMITIVE_TOPOLOGY>(myPrimitiveTopology));
-    DX11::Context->IASetInputLayout(myInputLayout.Get());
     DX11::Context->IASetVertexBuffers(0, 1, myVertexBuffer.GetAddressOf(), &myStride, &myOffset);
+    DX11::Context->IASetPrimitiveTopology(static_cast<D3D11_PRIMITIVE_TOPOLOGY>(myPrimitiveTopology));
+    DX11::Context->IASetInputLayout(myInputLayout.Get());
 
     DX11::Context->VSSetShader(myVertexShader.Get(), nullptr, 0);
     DX11::Context->GSSetShader(myGeometryShader.Get(), nullptr, 0);
@@ -147,7 +175,6 @@ void ParticleEmitter::SetAsResource() const
     {
         myTexture->SetAsResource(0);
     }
-
 }
 
 void ParticleEmitter::Draw() const

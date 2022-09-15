@@ -32,7 +32,8 @@ project "VulpineEditor"
 	{
 		"../CommonUtilities/",
 		"../GraphicsEngine/",
-		"../Imgui/"
+		"../VulpineEditor/ImGui/",
+		"../RapidJson/"
 	}
 
 	filter "configurations:Debug"

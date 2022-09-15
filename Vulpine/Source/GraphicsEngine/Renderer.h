@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include "ModelInstance.h"
+#include "ParticleSystem.h"
 
 class ForwardRenderer;
 class Model;
@@ -10,6 +11,7 @@ class Camera;
 struct Storage
 {
 	std::vector<std::shared_ptr<ModelInstance>> myModels;
+	std::vector<std::shared_ptr<ParticleSystem>> mySystems;
 };
 
 class Renderer
@@ -21,6 +23,7 @@ private:
 public:
 	static void SetCamera(std::shared_ptr<Camera> aCamera);
 	static void AddModel(const std::shared_ptr<ModelInstance>& aModel);
+	static void AddSystem(const std::shared_ptr<ParticleSystem>& aSystem);
 
 	static void Render(ForwardRenderer& aRenderer);
 

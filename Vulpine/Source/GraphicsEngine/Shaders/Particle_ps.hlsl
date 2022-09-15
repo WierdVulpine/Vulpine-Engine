@@ -1,4 +1,11 @@
-float4 main() : SV_TARGET
+#include "CommonStructs.hlsli"
+
+ParticlePixelOutput main(ParticleGeometryToPixel input)
 {
-	return float4(1.0f, 1.0f, 1.0f, 1.0f);
+	ParticlePixelOutput result;
+
+	float4 textureColor = albedoTexture.Sample(defaultSampler, input.UV);
+	result.Color.rgba = textureColor.rgba * input.Color.rgba;
+
+	return result;
 }

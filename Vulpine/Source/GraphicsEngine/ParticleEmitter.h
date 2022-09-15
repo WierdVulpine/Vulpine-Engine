@@ -44,6 +44,7 @@ struct ParticleVertex
 	CommonUtilities::Vector3f Velocity = { 0,0,0 };
 	CommonUtilities::Vector3f Scale = { 1,1,1 };
 	float LifeTime = 0;
+	float LerpVal = 0;
 };
 
 class ParticleEmitter
@@ -66,6 +67,10 @@ class ParticleEmitter
 	std::shared_ptr<Texture> myTexture;
 
 	void InitParticle(size_t aParticleIndex);
+
+	int myParticleCounter{ 0 };
+	float mySpawnTimer{ 0 };
+	int myMaxNumberOfParticles{ 0 };
 
 public:
 	virtual ~ParticleEmitter() = default;

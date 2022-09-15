@@ -13,6 +13,68 @@
 #include "filereadstream.h"
 #include "filewritestream.h"
 #include "LightAssetHandler.h"
+#include <filesystem>
+
+namespace fs = std::filesystem;
+
+ImVec4 ColorLerper(ImVec4 aFirst, ImVec4 aSecond, float aA)
+{
+	ImVec4 result;
+
+	result.x = { aFirst.x + aA * (aSecond.x - aFirst.x) };
+	result.y = { aFirst.y + aA * (aSecond.y - aFirst.y) };
+	result.z = { aFirst.z + aA * (aSecond.z - aFirst.z) };
+	result.w = { aFirst.w + aA * (aSecond.w - aFirst.w) };
+
+	return result;
+}
+
+void SavePreset(std::string aName, float aColor[4])
+{
+	std::string fileName = "Presets/" + aName + ".cp";
+	FILE* fp;
+	fopen_s(&fp, fileName.c_str(), "w");
+
+	char writeBuffer[65536];
+	rapidjson::FileWriteStream is(fp, writeBuffer, sizeof(writeBuffer));
+
+	rapidjson::Document d;
+	d.SetObject();
+
+	d.AddMember("ColorR", aColor[0], d.GetAllocator());
+	d.AddMember("ColorG", aColor[1], d.GetAllocator());
+	d.AddMember("ColorB", aColor[2], d.GetAllocator());
+	d.AddMember("ColorA", aColor[3], d.GetAllocator());
+
+	rapidjson::PrettyWriter<rapidjson::FileWriteStream> writer(is);
+	d.Accept(writer);
+	fclose(fp);
+
+}
+
+ImVec4 LoadPreset(std::string aPath)
+{
+	ImVec4 result;
+
+	std::string fileName = "Presets/" + aPath;
+	FILE* fp;
+	fopen_s(&fp, fileName.c_str(), "rb");
+
+	char readBuffer[65536];
+	rapidjson::FileReadStream is(fp, readBuffer, sizeof(readBuffer));
+
+	rapidjson::Document d;
+	d.ParseStream(is);
+
+	fclose(fp);
+
+	result =   { d["ColorR"].GetFloat(),
+								  d["ColorG"].GetFloat(),
+								  d["ColorB"].GetFloat(),
+								  d["ColorA"].GetFloat() };
+
+	return result;
+}
 
 void Scene::Init()
 {
@@ -31,6 +93,10 @@ void Scene::Init()
 	temp1->SetPosition({ -100,0,0 });
 	std::shared_ptr<ModelInstance> temp2 = ModelAssetHandler::GetModelInstance(L"Cube");
 	temp2->SetPosition({ 100,0,0 });
+
+	ParticleAssetHandler::LoadEmitterTemplate(L"TestEmitter.em");
+	myTestSystem = ParticleAssetHandler::GetParticleSystem(L"TestSystem");
+	Renderer::AddSystem(myTestSystem);
 
 	AddGameObject(temp);
 	AddGameObject(temp1);
@@ -52,7 +118,11 @@ void Scene::Update()
 		mySceneObjects[i]->Update(Time::GetDeltaTime());
 	}
 
+	myTestSystem->Update(Time::GetDeltaTime());
+
 	static bool ShowSettings = false;
+	static bool ShowPresetEditor = false;
+	static bool ShowEmitterEditor = false;
 
 	if (ImGui::BeginMainMenuBar())
 	{
@@ -66,10 +136,77 @@ void Scene::Update()
 		if (ImGui::BeginMenu("Edit"))
 		{
 			if (ImGui::MenuItem("Settings")) { ShowSettings = !ShowSettings; }
-
+			if (ImGui::MenuItem("Preset Editor")) { ShowPresetEditor = !ShowPresetEditor; }
+			//if (ImGui::MenuItem("Emitter Editor")) { ShowEmitterEditor = !ShowEmitterEditor; }
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
+	}
+
+	if (ShowEmitterEditor)
+	{
+		ImGui::Begin("Emitter Editor");
+
+		std::vector<std::string> emitterFiles;
+
+		std::string path = "Emitters/";
+		for (const auto& entry : fs::directory_iterator(path))
+		{
+			emitterFiles.push_back(entry.path().filename().string());
+		}
+		static std::string selectedFirstItem = emitterFiles[0];
+		static int selectedItemIndex = 0;
+		if (ImGui::BeginCombo("Emitter Name", selectedFirstItem.c_str()))
+		{
+			for (size_t i = 0; i < emitterFiles.size(); i++)
+			{
+				bool isSelected = (selectedFirstItem == emitterFiles[i]);
+				if (ImGui::Selectable(emitterFiles[i].c_str(), isSelected))
+				{
+					selectedFirstItem = emitterFiles[i];
+					selectedItemIndex;
+					//PresetOne = LoadPreset(selectedFirstItem);
+				}
+			}
+
+			ImGui::EndCombo();
+		}
+
+
+		ImGui::End();
+	}
+
+	if (ShowPresetEditor)
+	{
+		ImGui::SetNextWindowSize({ 400,400 });
+
+		ImGui::Begin("Preset Editor");
+
+		static char curValue[256] = "";
+
+		static float colorPresetTest[] = { 0,0,0,0 };
+
+		ImGui::InputText("FileName", curValue, sizeof(curValue));
+		ImGui::ColorEdit4("Color:", colorPresetTest);
+		if (ImGui::Button("Save Preset"))
+		{
+			SavePreset(curValue, colorPresetTest);
+		}
+
+		static char removeValue[256] = "";
+
+		ImGui::InputText("File remove name:", removeValue, sizeof(removeValue));
+		if (ImGui::Button("Remove File"))
+		{
+			std::string removePrefix = "Presets/";
+			removePrefix += removeValue;
+			if (remove(removePrefix.c_str()))
+			{
+
+			}
+		}
+
+		ImGui::End();
 	}
 
 	if (ShowSettings)
@@ -77,6 +214,19 @@ void Scene::Update()
 		ImGui::SetNextWindowSize({ 400,400 });
 
 		bool windowVisible = ImGui::Begin("Settings");
+
+		static bool usePreset = false;
+
+		static ImVec4 PresetOne = { 0,0,0,0 };
+		static ImVec4 PresetTwo = { 1,1,1,1 };
+
+		std::vector<std::string> presetFiles;
+
+		std::string path = "Presets/";
+		for (const auto &entry : fs::directory_iterator(path))
+		{
+			presetFiles.push_back(entry.path().filename().string());
+		}
 
 		if (!windowVisible)
 		{
@@ -86,9 +236,78 @@ void Scene::Update()
 
 		float ClearColor[] = {myEnginePtr->GetClearColor().x, myEnginePtr->GetClearColor().y, myEnginePtr->GetClearColor().z, 1};
 
-		ImGui::ColorPicker4("Clear Color", ClearColor);
+		static float ColorLerp = { 0 };
 
-		myEnginePtr->GetClearColor() = { ClearColor[0], ClearColor[1], ClearColor[2], ClearColor[3] };
+		if (presetFiles.size() >= 2)
+		{
+			ImGui::Checkbox("Use Presets", &usePreset);
+		}
+		else
+		{
+			ImGui::Text("There needs to be atleast 2 presets to use presets");
+		}
+
+		if (!usePreset)
+		{
+			ImGui::ColorPicker4("Clear Color", ClearColor);
+			myEnginePtr->GetClearColor() = { ClearColor[0], ClearColor[1], ClearColor[2], ClearColor[3] };
+		}
+		else
+		{
+			ImGui::ColorButton("First Preset", PresetOne);
+			ImGui::SameLine();
+			if (myFirstPresetIndex >= presetFiles.size())
+			{
+				myFirstPresetIndex = presetFiles.size() - 1;
+			}
+			static std::string selectedFirstItem = presetFiles[myFirstPresetIndex];
+			PresetOne = LoadPreset(selectedFirstItem);
+			if (ImGui::BeginCombo("First Preset#", selectedFirstItem.c_str()))
+			{
+				for (size_t i = 0; i < presetFiles.size(); i++)
+				{
+					bool isSelected = (selectedFirstItem == presetFiles[i]);
+					if (ImGui::Selectable(presetFiles[i].c_str(), isSelected))
+					{
+						selectedFirstItem = presetFiles[i];
+						myFirstPresetIndex = i;
+					}
+				}
+
+				ImGui::EndCombo();
+			}
+
+			ImGui::ColorButton("Second Preset", PresetTwo);
+			ImGui::SameLine();
+
+			if (mySecondPresetIndex >= presetFiles.size())
+			{
+				mySecondPresetIndex = presetFiles.size() - 1;
+			}
+
+			static std::string selectedSecondItem = presetFiles[mySecondPresetIndex];
+			PresetTwo = LoadPreset(selectedSecondItem);
+			if (ImGui::BeginCombo("Second Preset#", selectedSecondItem.c_str()))
+			{
+				for (size_t i = 0; i < presetFiles.size(); i++)
+				{
+					bool isSelected = (selectedSecondItem == presetFiles[i]);
+					if (ImGui::Selectable(presetFiles[i].c_str(), isSelected))
+					{
+						selectedSecondItem = presetFiles[i];
+						mySecondPresetIndex = i;
+					}
+				}
+
+				ImGui::EndCombo();
+			}
+
+			ImGui::SliderFloat("Color Lerp", &myLerpValue, 0, 1);
+			ImGui::Text("Lerped Color:");
+			ImVec4 lerpedColor = ColorLerper(PresetOne, PresetTwo, myLerpValue);
+			ImGui::ColorButton("LerpedColor", lerpedColor, 0, { 50, 50 });
+			myEnginePtr->GetClearColor() = { lerpedColor.x, lerpedColor.y, lerpedColor.z, lerpedColor.w };
+		}
 
 		if (ImGui::Button("Save"))
 		{
@@ -212,6 +431,10 @@ void Scene::LoadSettings()
 		                          d["ClearColorB"].GetFloat(), 
 		                          d["ClearColorA"].GetFloat() };
 
+	myLerpValue = d["LerpValue"].GetFloat();
+	myFirstPresetIndex = static_cast<int>(d["FirstIndex"].GetFloat());
+	mySecondPresetIndex = static_cast<int>(d["SecondIndex"].GetFloat());
+
 	myEnginePtr->GetClearColor() = loadedClearColor;
 
 
@@ -255,6 +478,9 @@ void Scene::SaveSettings()
 	d.AddMember("ClearColorG", myEnginePtr->GetClearColor().y, d.GetAllocator());
 	d.AddMember("ClearColorB", myEnginePtr->GetClearColor().z, d.GetAllocator());
 	d.AddMember("ClearColorA", myEnginePtr->GetClearColor().w, d.GetAllocator());
+	d.AddMember("LerpValue", myLerpValue, d.GetAllocator());
+	d.AddMember("FirstIndex", myFirstPresetIndex, d.GetAllocator());
+	d.AddMember("SecondIndex", mySecondPresetIndex, d.GetAllocator());
 
 	rapidjson::PrettyWriter<rapidjson::FileWriteStream> writer(is);
 	d.Accept(writer);

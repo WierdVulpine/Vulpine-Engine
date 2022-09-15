@@ -7,6 +7,7 @@
 #include "ModelAssetHandler.h"
 #include "Renderer.h"
 #include "FBXImporter.h"
+#include "RenderStateManager.h"
 
 LRESULT GraphicsEngine::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
@@ -54,6 +55,8 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY, unsigned someWid
 	ModelAssetHandler::Initialize();
 
 	myForwardRenderer.Initialize();
+
+	RenderStateManager::Initialize();
 
     return true;
 }

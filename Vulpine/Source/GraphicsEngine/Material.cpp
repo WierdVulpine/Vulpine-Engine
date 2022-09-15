@@ -17,6 +17,11 @@ void Material::SetNormalTexture(std::shared_ptr<Texture> aTexture)
 	myTextures[1] = aTexture;
 }
 
+void Material::SetMaterialTexture(std::shared_ptr<Texture> aTexture)
+{
+	myTextures[2] = aTexture;
+}
+
 void Material::SetAsResource(ComPtr<ID3D11Resource> aMaterialBuffer) const
 {
 	D3D11_MAPPED_SUBRESOURCE bufferData;
@@ -41,5 +46,9 @@ void Material::SetAsResource(ComPtr<ID3D11Resource> aMaterialBuffer) const
 	if (myTextures[MaterialTextureChannel::Normal])
 	{
 		myTextures[MaterialTextureChannel::Normal]->SetAsResource(1);
+	}
+	if (myTextures[MaterialTextureChannel::Material])
+	{
+		myTextures[MaterialTextureChannel::Material]->SetAsResource(2);
 	}
 }

@@ -39,11 +39,37 @@ struct VertexToPixel
 	float3 myNormal   : NORMAL;
 };
 
+struct ParticleVertexData
+{
+	float4 Position : POSITION;
+	float4 Color    : COLOR;
+	float3 Velocity : VELOCITY;
+	float3 Scale    : SCALE;
+	float  LifeTime : LIFETIME;
+};
+
+struct ParticleGeometryToPixel
+{
+	float4 Position : SV_POSITION;
+	float4 Color    : COLOR;
+	float3 Velocity : VELOCITY;
+	float3 Scale    : SCALE;
+	float  LifeTime : LIFETIME;
+	float2 UV       : TEXCOORD;
+};
+
+struct ParticlePixelOutput
+{
+	float4 Color    : SV_TARGET;
+};
+
 SamplerState defaultSampler : register(s0);
 
 Texture2D albedoTexture : register(t0);
 
 Texture2D normalTexture : register(t1);
+
+Texture2D materialTexture : register(t2);
 
 TextureCube enviromentTexture : register(t10);
 

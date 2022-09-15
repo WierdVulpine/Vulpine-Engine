@@ -19,7 +19,8 @@ project "GraphicsEngine"
 	{
 		"../CommonUtilities/",
 		"../Imgui/",
-		"../TGAImporter/"
+		"../TGAImporter/",
+		"../RapidJson/"
 	}
 
 	links

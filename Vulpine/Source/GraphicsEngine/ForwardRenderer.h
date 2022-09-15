@@ -8,6 +8,7 @@
 #include <vector>
 #include "EnviromentLight.h"
 #include "DirectionalLight.h"
+#include "ParticleSystem.h"
 
 class Camera;
 class ModelInstance;
@@ -45,10 +46,15 @@ public:
 
 	bool Initialize();
 
-	void Render(
+	void RenderModels(
 		const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ModelInstance>>& aModelList,
 		const std::shared_ptr<DirectionalLight>& aDirectionalLight, const std::shared_ptr<EnviromentLight>& anEnviromentalLight
 		);
+
+	void RenderParticles(
+		const std::shared_ptr<Camera>& aCamera,
+		const std::vector<std::shared_ptr<ParticleSystem>>& aParticleSystemList
+	);
 
 };
 

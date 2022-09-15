@@ -1,6 +1,9 @@
 {
-    "ClearColorR": 0.0,
-    "ClearColorG": 0.923729419708252,
-    "ClearColorB": 1.0,
-    "ClearColorA": 1.0
+    "ClearColorR": 0.7731131911277771,
+    "ClearColorG": 0.26047059893608093,
+    "ClearColorB": 0.06894810497760773,
+    "ClearColorA": 0.0,
+    "LerpValue": 0.3240000009536743,
+    "FirstIndex": 1.0,
+    "SecondIndex": 0.0
 }

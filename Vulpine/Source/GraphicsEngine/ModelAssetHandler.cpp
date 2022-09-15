@@ -5,7 +5,6 @@
 #include <fstream>
 #include "FBXImporter.h"
 #include "ModelInstance.h"
-//#include "Material.h"
 #include <random>
 #include "TextureAssetHandler.h"
 
