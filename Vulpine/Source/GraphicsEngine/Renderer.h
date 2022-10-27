@@ -7,6 +7,8 @@
 class ForwardRenderer;
 class Model;
 class Camera;
+class DefferedRenderer;
+class ShadowRenderer;
 
 struct Storage
 {
@@ -25,7 +27,7 @@ public:
 	static void AddModel(const std::shared_ptr<ModelInstance>& aModel);
 	static void AddSystem(const std::shared_ptr<ParticleSystem>& aSystem);
 
-	static void Render(ForwardRenderer& aRenderer);
+	static void Render(ForwardRenderer& aRenderer, DefferedRenderer& aDefferedRenderer, ShadowRenderer& aShadowRenderer);
 
 };
 

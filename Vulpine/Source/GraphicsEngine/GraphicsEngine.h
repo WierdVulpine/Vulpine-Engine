@@ -3,6 +3,9 @@
 #include "ForwardRenderer.h"
 #include "Model.h"
 #include "Camera.h"
+#include "GBuffer.h"
+#include "DefferedRenderer.h"
+#include "ShadowRenderer.h"
 
 class ModelAssetHandler;
 
@@ -25,16 +28,19 @@ public:
 	[[nodiscard]] HWND FORCEINLINE GetWindowHandle() const { return myWindowHandle; }
 	[[nodiscard]] SIZE FORCEINLINE GetWindowSize() const { return myWindowSize; }
 
-	Vector4f& GetClearColor() { return myClearColor; }
+	static Vector4f& GetClearColor() { return myClearColor; }
 
 private:
 	DX11 myDX11FrameWork;
+	std::shared_ptr<Camera> myCamera;
 	ForwardRenderer	myForwardRenderer;
+	DefferedRenderer myDefferedRenderer;
+	ShadowRenderer myShadowRenderer;
+	std::unique_ptr<GBuffer> myGBuffer;
 
 	std::shared_ptr<Model> myModel;
-	std::shared_ptr<Camera> myCamera;
 
-	Vector4f myClearColor;
+	inline static Vector4f myClearColor;
 
 };
 

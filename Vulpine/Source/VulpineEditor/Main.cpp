@@ -8,6 +8,10 @@
 #include "imgui.h"
 #include "imgui_impl_dx11.h"
 #include "imgui_impl_win32.h"
+#include <d3d11.h>
+#include <shellapi.h>
+#include <filesystem>
+#include "EditorLayer.h"
 
 #ifdef _DEBUG
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -38,8 +42,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
         false
     );
 
-    Scene myScene(graphicsEngine);
-    myScene.Init();
+    EditorLayer myEditorLayer;
+    myEditorLayer.Init(graphicsEngine);
 
     Input::SetHandle(graphicsEngine->GetWindowHandle());
 
@@ -49,6 +53,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
     ImGuiIO& io = ImGui::GetIO();
     ImGui_ImplWin32_Init(graphicsEngine->GetWindowHandle());
     ImGui_ImplDX11_Init(DX11::Device.Get(), DX11::Context.Get());
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
     ImGui::StyleColorsDark();
 #endif
 
@@ -65,6 +70,71 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+
+            static bool dropped;
+            if (!dropped)
+            {
+                DragAcceptFiles(graphicsEngine->GetWindowHandle(), true);
+                dropped = true;
+            }
+
+            if (msg.message == WM_DROPFILES)
+            {
+                HDROP hDrop = (HDROP)msg.wParam;
+                TCHAR filePath[MAX_PATH];
+                DragQueryFileW(hDrop, 0, filePath, MAX_PATH);
+                std::wstring wPath = filePath;
+                std::filesystem::path path = std::filesystem::path(wPath.begin(), wPath.end());
+                BOOL f = TRUE;
+                SwitchToThisWindow(graphicsEngine->GetWindowHandle(), f);
+
+                if (path.string().substr(path.string().size() - 4, path.string().size() - 1) == ".dds")
+                {
+                    const int idx = path.string().find_last_of("\\");
+                    if (std::string::npos != idx)
+                    {
+                        std::string fileName(path.string().substr(idx + 1));
+
+                        std::string fileEnding = fileName.substr(fileName.size() - 6);
+
+                        if (fileEnding == "_C.dds" || fileEnding == "_N.dds" || fileEnding == "_M.dds")
+                        {
+                            std::string newName = myEditorLayer.myCurrentContentDirectory;
+
+                            newName += "\\";
+                            newName += fileName;
+
+                            bool exists = false;
+                            std::string pather = myEditorLayer.myCurrentContentDirectory;
+                            for (const auto& entry : std::filesystem::directory_iterator(pather))
+                            {
+                                if (entry.path().filename().string() == fileName)
+                                {
+                                    exists = true;
+                                    break;
+                                }
+                            }
+
+                            if (exists)
+                            {
+                                if (MessageBoxA(NULL, "That texture already exists, would you like to overwrite it?", "Warning", MB_YESNO) == IDYES)
+                                {
+                                    std::filesystem::copy_file(path, newName, std::filesystem::copy_options::overwrite_existing);
+                                }
+                            }
+                            else
+                            {
+                                std::filesystem::copy_file(path, newName);
+                            }
+
+                        }
+
+
+                        fileName;
+                    }
+                }
+
+            }
 
             Input::UpdateEvents(msg.message, msg.wParam, msg.lParam);
 
@@ -96,8 +166,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
         graphicsEngine->RenderFrame();
 
-        myScene.Update();
-        myScene.Render();
+        myEditorLayer.Update();
+        /*myScene.Update();
+        myScene.Render();*/
 
 #ifdef _DEBUG
         ImGui::Render();

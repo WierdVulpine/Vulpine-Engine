@@ -14,13 +14,13 @@ class Texture
 
 protected:
 
-	std::wstring myName;
 
 	ComPtr<ID3D11Resource> myTexture;
 
 	ComPtr<ID3D11ShaderResourceView> mySRV;
 
 public:
+	std::wstring myName;
 	virtual ~Texture();
 
 	void SetAsResource(unsigned int aSlot);

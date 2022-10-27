@@ -1,0 +1,224 @@
+{
+    "SceneObjects": [
+        {
+            "Index": 0,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "1",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        },
+        {
+            "Index": 1,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "2",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        },
+        {
+            "Index": 2,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "3",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        },
+        {
+            "Index": 3,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "4",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        },
+        {
+            "Index": 4,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "5",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        },
+        {
+            "Index": 5,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "6",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        },
+        {
+            "Index": 6,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "7",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        },
+        {
+            "Index": 7,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "8",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        },
+        {
+            "Index": 8,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "9",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        },
+        {
+            "Index": 9,
+            "Position": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Rotation": [
+                0.0,
+                0.0,
+                0.0
+            ],
+            "Scale": [
+                1.0,
+                1.0,
+                1.0
+            ],
+            "Children": [],
+            "Parent": -1,
+            "Name": "10",
+            "Path": ".\\SM_Particle_Chest.fbx"
+        }
+    ]
+}

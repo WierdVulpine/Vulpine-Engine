@@ -1,3 +1,5 @@
+#define MAX_LIGHTS 64
+
 struct VertexInput
 {
 	float4 myPosition    : POSITION;
@@ -23,6 +25,7 @@ struct VertexInput
 struct VertexToPixel
 {
 	float4 myPosition : SV_POSITION;
+	float4 myWorldPosition : POSITION;
 
 	float4 myVxColor  : COLOR0;
 	float4 myVxColor2 : COLOR1;
@@ -37,6 +40,35 @@ struct VertexToPixel
 	float3 myTangent  : TANGENT;
 	float3 myBinormal : BINORMAL;
 	float3 myNormal   : NORMAL;
+};
+
+struct DefferedVertexInput
+{
+	unsigned int myIndex : SV_VertexID;
+};
+
+struct DefferedVertexToPixel
+{
+	float4 Position : SV_POSITION;
+	float2 UV       : TEXCOORD;
+};
+
+struct DefferedPixelOutput
+{
+	float4 Color : SV_TARGET;
+};
+
+struct GBufferOutput
+{
+	float4 Albedo          : SV_TARGET0;
+	float4 Normal          : SV_TARGET1;
+	float4 Material        : SV_TARGET2;
+
+	float4 VertexNormal    : SV_TARGET3;
+
+	float4 WorldPosition    : SV_TARGET4;
+
+	float AmbientOcclusion : SV_TARGET5;
 };
 
 struct ParticleVertexData
@@ -64,6 +96,7 @@ struct ParticlePixelOutput
 };
 
 SamplerState defaultSampler : register(s0);
+SamplerState pointClampSampler : register(s1);
 
 Texture2D albedoTexture : register(t0);
 
@@ -82,6 +115,8 @@ cbuffer FrameBuffer : register(b0)
 {
 	float4x4 FB_ToView;
 	float4x4 FB_ToProjection;
+	float3 FB_CamTranslation;
+	float FB_padding;
 }
 
 cbuffer ObjectBuffer : register(b1)
@@ -98,10 +133,33 @@ cbuffer MaterialBuffer : register(b2)
 	float padding;
 }
 
+
+
+struct LightData
+{
+	float4x4 View;
+	float4x4 Projection;
+
+	float3 Color;
+	float Intensity;
+	float3 Direction;
+	float Range;
+	float3 Position;
+	float Attenuation;
+	float SpotInnerRadius;
+	float SpotOuterRadius;
+	uint LightType;
+	bool CastShadows;
+
+	float NearPlane;
+	float FarPlane;
+	float2 paddington;
+};
+
 cbuffer LightBuffer : register(b3)
 {
-	float3 LB_Color;
-	float LB_Intensity;
-	float3 LB_Direction;
-	float LB_Padding;
+	LightData LB_DirectionalLight;
+	LightData LB_Lights[MAX_LIGHTS];
+	uint LB_NumLights;
+	float3 LB_Padding;
 }

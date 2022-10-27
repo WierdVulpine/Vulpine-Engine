@@ -65,6 +65,7 @@ void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const
 
     myFrameBufferData.View = Matrix4x4f::GetFastInverse(aCamera->GetTransform().GetMatrix());
     myFrameBufferData.Projection = aCamera->GetProjection();
+    myFrameBufferData.CamTranslation = aCamera->GetTransform().GetPosition();
 
     ZeroMemory(&bufferData, sizeof(D3D11_MAPPED_SUBRESOURCE));
     result = DX11::Context->Map(myFrameBuffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &bufferData);
@@ -137,13 +138,14 @@ void ForwardRenderer::RenderModels(const std::shared_ptr<Camera>& aCamera, const
             DX11::Context->DrawIndexed(meshData.myNumberOfIndices, 0, 0);
         }
     }
-
 }
 
 void ForwardRenderer::RenderParticles(const std::shared_ptr<Camera>& aCamera, const std::vector<std::shared_ptr<ParticleSystem>>& aParticleSystemList)
 {
-
-
+    if (!aCamera)
+    {
+        return;
+    }
     HRESULT result = S_FALSE;
     D3D11_MAPPED_SUBRESOURCE bufferData;
 

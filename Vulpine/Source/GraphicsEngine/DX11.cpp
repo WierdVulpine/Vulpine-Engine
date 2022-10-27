@@ -68,7 +68,7 @@ bool DX11::Initialize(HWND aWindowHandle, bool anIsDebugDeviceEnabled)
 
 	RECT clientRect = { 0,0,0,0 };
 	GetClientRect(aWindowHandle, &clientRect);
-
+	ClientRect = clientRect;
 	ComPtr<ID3D11Texture2D> depthBufferTexture;
 	D3D11_TEXTURE2D_DESC depthBufferDesc = { 0 };
 	depthBufferDesc.Width = clientRect.right - clientRect.left;
@@ -136,4 +136,16 @@ void DX11::BeginFrame(CommonUtilities::Vector4<float> aClearColor)
 void DX11::EndFrame()
 {
 	SwapChain->Present(1, 0);
+}
+
+void DX11::SetViewPort(float width, float height)
+{
+	D3D11_VIEWPORT viewport = { 0 };
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+	viewport.Width = width;
+	viewport.Height = height;
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	Context->RSSetViewports(1, &viewport);
 }

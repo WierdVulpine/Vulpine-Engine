@@ -82,11 +82,11 @@ public:
 private:
 
 	std::vector<MeshData> myMeshData = {};
-	std::wstring myPath;
 
 	Skeleton mySkeleton;
 
 public:
+	std::wstring myPath;
 
 	bool myHasSkeleton{ false };
 
@@ -106,7 +106,7 @@ public:
 
 	void AddAnimation(Animation& anAnimation);
 
-	const MeshData& GetMeshData(unsigned int anIndex) const { return myMeshData[anIndex]; }
+	MeshData& GetMeshData(unsigned int anIndex) { return myMeshData[anIndex]; }
 	std::wstring const& GetName() const { return myPath; }
 
 	FORCEINLINE size_t GetNumMeshes() const { return myMeshData.size(); }

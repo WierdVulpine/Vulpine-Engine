@@ -33,6 +33,16 @@ public:
 	}
 
 	std::wstring GetName() { return myModel->GetName(); }
+	std::string GetNameStr() { return myRealName; }
+	std::shared_ptr<Material> GetMaterial() { return myModel->GetMeshData(0).myMaterial; }
+	void SetMaterial(std::shared_ptr<Material> aMaterial)
+	{
+		for (size_t i = 0; i < myModel->GetNumMeshes(); i++)
+		{
+			myModel->GetMeshData(i).myMaterial = aMaterial;
+		}
+	}
+	std::string GetModelPath() { return std::string(myModel->myPath.begin(), myModel->myPath.end()); }
 
 	FORCEINLINE Model::MeshData const& GetMeshData(unsigned int anIndex) const { return myModel->GetMeshData(anIndex); }
 	FORCEINLINE size_t GetNumMeshes() const { return myModel->GetNumMeshes(); }

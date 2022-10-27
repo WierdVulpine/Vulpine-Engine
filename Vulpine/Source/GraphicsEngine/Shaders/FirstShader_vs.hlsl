@@ -35,6 +35,7 @@ VertexToPixel main(VertexInput input)
 	const float4 vertexProjectionPosition = mul(FB_ToProjection, vertexViewPosition);
 
 	result.myPosition = vertexProjectionPosition;
+	result.myWorldPosition = vertexWorldPosition;
 
 	result.myVxColor  = input.myVxColor;
 	result.myVxColor2 = input.myVxColor2;

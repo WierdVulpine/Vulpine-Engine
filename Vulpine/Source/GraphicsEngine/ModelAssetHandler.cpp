@@ -217,8 +217,9 @@ bool ModelAssetHandler::InitUnitCube()
 		}
 	}
 
-	std::wstring wideMatName = L"Default_C.dds";
-	std::wstring normalName = L"Default_N.dds";
+	std::wstring wideMatName = L"Textures/Default_C.dds";
+	std::wstring normalName = L"Textures/Default_N.dds";
+	std::wstring materialName = L"Textures/Default_M.dds";
 
 	std::shared_ptr<Material> meshMaterial = std::make_shared<Material>();
 
@@ -229,6 +230,10 @@ bool ModelAssetHandler::InitUnitCube()
 	if (TextureAssetHandler::LoadTexture(normalName))
 	{
 		meshMaterial->SetNormalTexture(TextureAssetHandler::GetTexture(normalName));
+	}
+	if (TextureAssetHandler::LoadTexture(materialName))
+	{
+		meshMaterial->SetMaterialTexture(TextureAssetHandler::GetTexture(materialName));
 	}
 
 	HRESULT result;
@@ -420,8 +425,11 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 		{
 			TGA::FBXModel::FBXMesh& mesh = tgaModel.Meshes[i];
 
-			std::wstring textureName = someFilePath;
-			std::wstring normalName = someFilePath;
+			std::wstring newNameTexture = L"Textures/" + someFilePath;
+
+			std::wstring textureName = newNameTexture;
+			std::wstring normalName = newNameTexture;
+			std::wstring materialName = newNameTexture;
 
 			textureName.pop_back();
 			textureName.pop_back();
@@ -432,9 +440,15 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 			normalName.pop_back();
 			normalName.pop_back();
 			normalName.pop_back();
+
+			materialName.pop_back();
+			materialName.pop_back();
+			materialName.pop_back();
+			materialName.pop_back();
 
 			textureName = textureName + L"_C.dds";
 			normalName = normalName + L"_N.dds";
+			materialName = materialName + L"_M.dds";
 
 			std::shared_ptr<Material> meshMaterial = std::make_shared<Material>();
 
@@ -445,6 +459,10 @@ bool ModelAssetHandler::LoadModel(const std::wstring& someFilePath)
 			if (TextureAssetHandler::LoadTexture(normalName))
 			{
 				meshMaterial->SetNormalTexture(TextureAssetHandler::GetTexture(normalName));
+			}
+			if (TextureAssetHandler::LoadTexture(materialName))
+			{
+				meshMaterial->SetMaterialTexture(TextureAssetHandler::GetTexture(materialName));
 			}
 
 			std::vector<Vertex> mdlVertecies;

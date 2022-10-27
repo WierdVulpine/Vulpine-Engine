@@ -8,11 +8,41 @@
 #include "Renderer.h"
 #include "FBXImporter.h"
 #include "RenderStateManager.h"
+#include <filesystem>
 
 LRESULT GraphicsEngine::WinProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	// We want to be able to access the Graphics Engine instance from inside this function.
 	static GraphicsEngine* graphicsEnginePtr = nullptr;
+
+	/*static bool dropped;
+	if (!dropped)
+	{
+		DragAcceptFiles(hWnd, true);
+		dropped = true;
+	}
+
+	if (uMsg == WM_DROPFILES)
+	{
+		HDROP hDrop = (HDROP)wParam;
+		TCHAR filePath[MAX_PATH];
+		DragQueryFile(hDrop, 0, filePath, MAX_PATH);
+		std::wstring wPath = filePath;
+		std::filesystem::path path = std::filesystem::path(wPath.begin(), wPath.end());
+		BOOL f = TRUE;
+		SwitchToThisWindow(hWnd, f);
+
+		if (path.string().substr(path.string().size() - 4, path.string().size() - 1) == ".dds")
+		{
+			const int idx = path.string().find_last_of("\\");
+			if (std::string::npos != idx)
+			{
+				std::string fileName(path.string().substr(idx + 1));
+				fileName;
+			}
+		}
+
+	}*/
 
 	if (uMsg == WM_DESTROY || uMsg == WM_CLOSE)
 	{
@@ -55,8 +85,12 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY, unsigned someWid
 	ModelAssetHandler::Initialize();
 
 	myForwardRenderer.Initialize();
+	myDefferedRenderer.Initialize();
+	myShadowRenderer.Initialize();
 
 	RenderStateManager::Initialize();
+
+	myClearColor = { 1,1,1,1 };
 
     return true;
 }
@@ -64,6 +98,7 @@ bool GraphicsEngine::Initialize(unsigned someX, unsigned someY, unsigned someWid
 void GraphicsEngine::BeginFrame()
 {
 	myDX11FrameWork.BeginFrame({ myClearColor.x,myClearColor.y,myClearColor.z,1 });
+	RenderStateManager::ResetStates();
 }
 
 void GraphicsEngine::EndFrame()
@@ -73,6 +108,8 @@ void GraphicsEngine::EndFrame()
 
 void GraphicsEngine::RenderFrame()
 {
-	Renderer::Render(myForwardRenderer);
-	//myForwardRenderer.Render(myCamera, { myModel });
+	//DX11::Context->ClearRenderTargetView(GBuffer::myVRTVs.Get(), &myClearColor.x);
+	Renderer::Render(myForwardRenderer, myDefferedRenderer, myShadowRenderer);
+	
+	DX11::Context->OMSetRenderTargets(1, DX11::BackBuffer.GetAddressOf(), DX11::DepthBuffer.Get());
 }

@@ -30,5 +30,9 @@ public:
 
 	static ComPtr<ID3D11RenderTargetView> BackBuffer;
 	static ComPtr<ID3D11DepthStencilView> DepthBuffer;
+
+	static void SetViewPort(float aWidth, float aHeight);
+
+	inline static RECT ClientRect;
 };
 

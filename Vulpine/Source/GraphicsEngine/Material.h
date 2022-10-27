@@ -18,10 +18,10 @@ namespace MaterialTextureChannel
 
 class Material
 {
-	std::wstring myName;
 	CommonUtilities::Vector3f myAlbedo;
 
 public:
+	std::wstring myName;
 
 	struct MaterialData
 	{
@@ -33,9 +33,9 @@ private:
 
 	MaterialData myMaterialData;
 
-	std::array<std::shared_ptr<Texture>, MaterialTextureChannel::COUNT> myTextures;
 
 public:
+	std::array<std::shared_ptr<Texture>, MaterialTextureChannel::COUNT> myTextures;
 
 	Material() = default;
 	virtual ~Material() = default;
